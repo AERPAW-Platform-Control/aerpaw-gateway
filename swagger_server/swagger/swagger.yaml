@@ -1,0 +1,617 @@
+openapi: 3.0.0
+info:
+  title: Aerpaw Gateway
+  description: |
+    This is Aerpaw gateway service to interact with Emulab
+  contact:
+    email: ericafu@renci.org
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: http://0.0.0.0:8080/ericafu1122/aerpawgateway/1.0.0
+  description: Localhost
+- url: https://virtserver.swaggerhub.com/ericafu1122/aerpawgateway/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /version:
+    get:
+      tags:
+      - version
+      summary: API version
+      description: The API version
+      operationId: get_version
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: 0.0.1
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.version_controller
+  /reservation:
+    get:
+      tags:
+      - reservation
+      summary: get reservation under user
+      description: get reservation under user
+      operationId: get_reservation
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: cluster
+        in: query
+        description: either cluster name or cluster_urn
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+      x-openapi-router-controller: swagger_server.controllers.reservation_controller
+    post:
+      tags:
+      - reservation
+      summary: create reservation
+      description: Create Reservation
+      operationId: create_reservation
+      parameters:
+      - name: validate
+        in: query
+        description: set to true if just to validate instead of actual reserve
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      requestBody:
+        $ref: '#/components/requestBodies/Reservation'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiResponse'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+        "405":
+          description: Invalid input
+      x-openapi-router-controller: swagger_server.controllers.reservation_controller
+    delete:
+      tags:
+      - reservation
+      summary: delete reservation
+      description: Delete Reservation
+      operationId: delete_reservation
+      parameters:
+      - name: username
+        in: query
+        description: username who request to delete
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: cluster
+        in: query
+        description: either cluster name or cluster_urn
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: project
+        in: query
+        description: The project id
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: reservation
+        in: query
+        description: reservation uuid to delete
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiResponse'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+        "404":
+          description: Reservation not found
+      x-openapi-router-controller: swagger_server.controllers.reservation_controller
+  /resources:
+    get:
+      tags:
+      - resources
+      summary: list resources
+      description: List resources
+      operationId: list_resources
+      parameters:
+      - name: username
+        in: query
+        description: The username for the request
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: project
+        in: query
+        description: Project pid
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: experiment
+        in: query
+        description: if experiment id is given, manifest rspec of the experiment will
+          be returned.
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: rspec advertisement
+                x-content-type: text/plain
+        "400":
+          description: Bad request
+      x-openapi-router-controller: swagger_server.controllers.resources_controller
+  /experiment/{experiment}:
+    get:
+      tags:
+      - experiment
+      summary: get status of specific experiment
+      description: get Experiment status of specific experiment
+      operationId: query_experiment
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: cluster
+        in: query
+        description: either cluster name or cluster_urn
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: project
+        in: query
+        description: project name
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: experiment
+        in: path
+        description: experiment to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Experiment'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+      x-openapi-router-controller: swagger_server.controllers.experiment_controller
+  /experiments:
+    get:
+      tags:
+      - experiment
+      summary: get experiment(s) under user
+      description: get experiment(s) under user
+      operationId: get_experiments
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: cluster
+        in: query
+        description: either cluster name or cluster_urn
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Experiment'
+                x-content-type: application/json
+        "400":
+          description: unknown user
+      x-openapi-router-controller: swagger_server.controllers.experiment_controller
+  /experiment:
+    post:
+      tags:
+      - experiment
+      summary: ceate a experiment
+      description: instantiate/start experiment
+      operationId: create_experiment
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/Experiment'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiResponse'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+        "405":
+          description: invalid input
+      x-openapi-router-controller: swagger_server.controllers.experiment_controller
+    delete:
+      tags:
+      - experiment
+      summary: delete experiment
+      description: delete/terminate experiment
+      operationId: delete_experiment
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: cluster
+        in: query
+        description: either cluster name or cluster_urn
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: project
+        in: query
+        description: project name
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: experiment
+        in: query
+        description: experiment to delete
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "400":
+          description: Unknown User
+        "404":
+          description: Experiment not found
+      x-openapi-router-controller: swagger_server.controllers.experiment_controller
+  /user:
+    get:
+      tags:
+      - user
+      summary: get user information
+      description: get user information
+      operationId: get_user
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Experiment'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+      x-openapi-router-controller: swagger_server.controllers.user_controller
+    post:
+      tags:
+      - user
+      summary: create user on emulab testbed
+      operationId: create_user
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiResponse'
+                x-content-type: application/json
+        "400":
+          description: User exists
+        "405":
+          description: Invalid input
+      x-openapi-router-controller: swagger_server.controllers.user_controller
+    delete:
+      tags:
+      - user
+      summary: delete user
+      operationId: delete_user
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Unknown User
+      x-openapi-router-controller: swagger_server.controllers.user_controller
+  /profile:
+    get:
+      tags:
+      - profile
+      summary: get profiles under user
+      description: get profiles under user
+      operationId: get_profile
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Experiment'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+      x-openapi-router-controller: swagger_server.controllers.profile_controller
+components:
+  schemas:
+    User:
+      required:
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          example: yxin
+    Experiment:
+      required:
+      - cluster
+      - end
+      - experiment
+      - profile
+      - project
+      - start
+      type: object
+      properties:
+        experiment:
+          type: string
+          example: experiment001
+        project:
+          type: string
+          example: AERPAW
+        profile:
+          type: string
+          example: UUID of profile
+        cluster:
+          type: string
+          example: RENCI
+        start:
+          type: string
+        end:
+          type: string
+        duration:
+          type: integer
+          format: int32
+          example: 24
+        username:
+          type: string
+          example: yxin
+      example:
+        duration: 24
+        cluster: RENCI
+        experiment: experiment001
+        profile: UUID of profile
+        start: start
+        project: AERPAW
+        end: end
+        username: yxin
+    Reservation:
+      required:
+      - end
+      - experiment
+      - nodes
+      - project
+      - start
+      - type
+      - username
+      type: object
+      properties:
+        username:
+          type: string
+          example: yxin
+        project:
+          type: string
+          example: AERPAW
+        cluster:
+          type: string
+        start:
+          type: string
+        end:
+          type: string
+        type:
+          type: string
+        nodes:
+          type: integer
+          format: int32
+        experiment:
+          type: string
+        uuid:
+          type: string
+          example: "1234567890"
+      example:
+        cluster: cluster
+        nodes: 0
+        experiment: experiment
+        start: start
+        project: AERPAW
+        end: end
+        type: type
+        uuid: "1234567890"
+        username: yxin
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        value:
+          type: string
+        output:
+          type: string
+        logurl:
+          type: string
+      example:
+        output: output
+        code: 0
+        logurl: logurl
+        value: value
+  requestBodies:
+    Reservation:
+      description: Reservation Object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Reservation'
+      required: true
+    Experiment:
+      description: Reservation Object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Experiment'
+      required: true
+    User:
+      description: Reservation Object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+      required: true
+

@@ -1,0 +1,194 @@
+openapi: 3.0.0
+info:
+  title: Aerpaw Gateway
+  description: |
+    This is Aerpaw gateway service to interact with Emulab
+  contact:
+    email: ericafu@renci.org
+  license:
+    name: MIT
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+- url: https://virtserver.swaggerhub.com/ericafu1122/aerpawgateway/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: http://localhost:8080/ericafu1122/aerpawgateway/1.0.0
+  description: Localhost
+tags:
+- name: reservations
+  description: Reservations in Emulab
+paths:
+  /reservations:
+    get:
+      tags:
+      - reservations
+      summary: Get reservation under user
+      description: Get reservation under user
+      operationId: get_reservations
+      parameters:
+      - name: username
+        in: query
+        description: The username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+                x-content-type: application/json
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+        "400":
+          description: Unknown User
+      x-openapi-router-controller: swagger_server.controllers.reservations_controller
+  /resources:
+    get:
+      tags:
+      - resources
+      summary: list resources
+      description: List resources
+      operationId: list_resources
+      parameters:
+      - name: project
+        in: query
+        description: Project pid
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: experiment
+        in: query
+        description: Experiment pid
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: rspec advertisement
+                x-content-type: text/plain
+        "400":
+          description: Bad request
+      x-openapi-router-controller: swagger_server.controllers.resources_controller
+components:
+  schemas:
+    Reservation:
+      required:
+      - pid
+      - uid
+      type: object
+      properties:
+        uid:
+          type: string
+          example: example_username
+        pid:
+          type: string
+          example: example_project
+        remote_uid:
+          type: string
+        remote_pid:
+          type: string
+        user:
+          type: string
+        project:
+          type: string
+        uuid:
+          type: string
+        cluster_id:
+          type: string
+        cluster_urn:
+          type: string
+        start:
+          type: string
+        end:
+          type: string
+        nodes:
+          type: integer
+          format: int32
+        type:
+          type: string
+        reshours:
+          type: string
+        using:
+          type: integer
+          format: int32
+        approved:
+          type: string
+        created:
+          type: string
+        usedhours:
+          type: integer
+          format: int32
+        idx:
+          type: string
+        utilization:
+          type: integer
+          format: int32
+        notes:
+          type: string
+      example:
+        remote_uid: remote_uid
+        using: 6
+        notes: notes
+        remote_pid: remote_pid
+        created: created
+        usedhours: 1
+        start: start
+        project: project
+        reshours: reshours
+        pid: example_project
+        utilization: 5
+        type: type
+        uuid: uuid
+        uid: example_username
+        cluster_id: cluster_id
+        approved: approved
+        nodes: 0
+        cluster_urn: cluster_urn
+        end: end
+        idx: idx
+        user: user
+      xml:
+        name: Reservation
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+  requestBodies:
+    Reservation:
+      description: Reservation Object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Reservation'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Reservation'
+      required: true
+
