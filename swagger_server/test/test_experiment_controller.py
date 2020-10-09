@@ -19,13 +19,11 @@ class TestExperimentController(BaseTestCase):
         ceate a experiment
         """
         body = Experiment()
-        query_string = [('username', 'username_example')]
         response = self.client.open(
             '/ericafu1122/aerpawgateway/1.0.0/experiment',
             method='POST',
             data=json.dumps(body),
-            content_type='application/json',
-            query_string=query_string)
+            content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
@@ -68,7 +66,7 @@ class TestExperimentController(BaseTestCase):
                         ('cluster', 'cluster_example'),
                         ('project', 'project_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/experiment/{experiment}'.format(experiment=789),
+            '/ericafu1122/aerpawgateway/1.0.0/experiment/{experiment}'.format(experiment='experiment_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,

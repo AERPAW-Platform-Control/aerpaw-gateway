@@ -37,7 +37,7 @@ class TestReservationController(BaseTestCase):
         query_string = [('username', 'username_example'),
                         ('cluster', 'cluster_example'),
                         ('project', 'project_example'),
-                        ('reservation', 'reservation_example')]
+                        ('reservation', 789)]
         response = self.client.open(
             '/ericafu1122/aerpawgateway/1.0.0/reservation',
             method='DELETE',

@@ -137,12 +137,13 @@ paths:
           type: string
       - name: reservation
         in: query
-        description: reservation uuid to delete
+        description: reservation id to delete
         required: true
         style: form
         explode: true
         schema:
-          type: string
+          type: integer
+          format: int64
       responses:
         "200":
           description: OK
@@ -237,13 +238,12 @@ paths:
           type: string
       - name: experiment
         in: path
-        description: experiment to delete
+        description: experiment name to query
         required: true
         style: simple
         explode: false
         schema:
-          type: integer
-          format: int64
+          type: string
       responses:
         "200":
           description: successful operation
@@ -301,15 +301,6 @@ paths:
       summary: ceate a experiment
       description: instantiate/start experiment
       operationId: create_experiment
-      parameters:
-      - name: username
-        in: query
-        description: username for the request
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
       requestBody:
         $ref: '#/components/requestBodies/Experiment'
       responses:
@@ -489,7 +480,7 @@ components:
       properties:
         username:
           type: string
-          example: yxin
+          example: erikaadm
     Experiment:
       required:
       - cluster
@@ -500,38 +491,35 @@ components:
       - start
       type: object
       properties:
+        username:
+          type: string
+          example: erikaadm
         experiment:
           type: string
-          example: experiment001
+          example: aerpaw001
         project:
           type: string
-          example: AERPAW
+          example: TestProject1
         profile:
           type: string
-          example: UUID of profile
+          example: TestProject1,OneRawPC
         cluster:
           type: string
           example: RENCI
         start:
           type: string
+          example: "1602556653"
         end:
           type: string
-        duration:
-          type: integer
-          format: int32
-          example: 24
-        username:
-          type: string
-          example: yxin
+          example: "1602566653"
       example:
-        duration: 24
         cluster: RENCI
-        experiment: experiment001
-        profile: UUID of profile
-        start: start
-        project: AERPAW
-        end: end
-        username: yxin
+        experiment: aerpaw001
+        profile: TestProject1,OneRawPC
+        start: "1602556653"
+        project: TestProject1
+        end: "1602566653"
+        username: erikaadm
     Reservation:
       required:
       - end
@@ -545,36 +533,41 @@ components:
       properties:
         username:
           type: string
-          example: yxin
+          example: erikaadm
         project:
           type: string
-          example: AERPAW
+          example: TestProject1
         cluster:
           type: string
+          example: RENCI
         start:
           type: string
+          example: "1602566653"
         end:
           type: string
+          example: "1602576653"
         type:
           type: string
+          example: x3651
         nodes:
           type: integer
           format: int32
+          example: 1
         experiment:
           type: string
+          example: aerpaw001
         uuid:
           type: string
-          example: "1234567890"
       example:
-        cluster: cluster
-        nodes: 0
-        experiment: experiment
-        start: start
-        project: AERPAW
-        end: end
-        type: type
-        uuid: "1234567890"
-        username: yxin
+        cluster: RENCI
+        nodes: 1
+        experiment: aerpaw001
+        start: "1602566653"
+        project: TestProject1
+        end: "1602576653"
+        type: x3651
+        uuid: uuid
+        username: erikaadm
     ApiResponse:
       type: object
       properties:

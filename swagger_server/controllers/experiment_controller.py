@@ -7,15 +7,13 @@ from swagger_server import util
 from . import emulab
 
 
-def create_experiment(body, username):  # noqa: E501
+def create_experiment(body):  # noqa: E501
     """ceate a experiment
 
     instantiate/start experiment # noqa: E501
 
     :param body: Reservation Object
     :type body: dict | bytes
-    :param username: username for the request
-    :type username: str
 
     :rtype: List[ApiResponse]
     """
@@ -72,8 +70,8 @@ def query_experiment(username, project, experiment, cluster=None):  # noqa: E501
     :type username: str
     :param project: project name
     :type project: str
-    :param experiment: experiment to delete
-    :type experiment: int
+    :param experiment: experiment name to query
+    :type experiment: str
     :param cluster: either cluster name or cluster_urn
     :type cluster: str
 
@@ -81,6 +79,7 @@ def query_experiment(username, project, experiment, cluster=None):  # noqa: E501
     """
     emulab_cmd = '{} sudo -u {} manage_instance status {},{}'.format(
         emulab.CMD_PREFIX, username, project, experiment)
-
-    return emulab.send_request(emulab_cmd)
+    emulab_stdout = emulab.send_request(emulab_cmd)
+    print(emulab_stdout)
+    return None
 

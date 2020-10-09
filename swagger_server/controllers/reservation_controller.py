@@ -12,15 +12,15 @@ from swagger_server import util
 def create_reservation(body, validate=None):  # noqa: E501
     """create reservation
 
-        Create Reservation # noqa: E501
+    Create Reservation # noqa: E501
 
-        :param body: Reservation Object
-        :type body: dict | bytes
-        :param validate: set to true if just to validate instead of actual reserve
-        :type validate: bool
+    :param body: Reservation Object
+    :type body: dict | bytes
+    :param validate: set to true if just to validate instead of actual reserve
+    :type validate: bool
 
-        :rtype: List[ApiResponse]
-        """
+    :rtype: List[ApiResponse]
+    """
     if connexion.request.is_json:
         reservation = Reservation.from_dict(connexion.request.get_json())  # noqa: E501
         print(reservation)
@@ -75,12 +75,12 @@ def delete_reservation(username, project, reservation, cluster=None):  # noqa: E
 def get_reservation(username, cluster=None):  # noqa: E501
     """get reservation under user
 
-        get reservation under user # noqa: E501
+    get reservation under user # noqa: E501
 
-        :param username: username for the request
-        :type username: str
-        :param cluster: either cluster name or cluster_urn
-        :type cluster: str
+    :param username: username for the request
+    :type username: str
+    :param cluster: either cluster name or cluster_urn
+    :type cluster: str
 
     :rtype: List[Reservation]
     """

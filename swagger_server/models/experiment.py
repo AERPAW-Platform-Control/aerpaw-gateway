@@ -14,9 +14,11 @@ class Experiment(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, experiment: str=None, project: str=None, profile: str=None, cluster: str=None, start: str=None, end: str=None, duration: int=None, username: str=None):  # noqa: E501
+    def __init__(self, username: str=None, experiment: str=None, project: str=None, profile: str=None, cluster: str=None, start: str=None, end: str=None):  # noqa: E501
         """Experiment - a model defined in Swagger
 
+        :param username: The username of this Experiment.  # noqa: E501
+        :type username: str
         :param experiment: The experiment of this Experiment.  # noqa: E501
         :type experiment: str
         :param project: The project of this Experiment.  # noqa: E501
@@ -29,40 +31,33 @@ class Experiment(Model):
         :type start: str
         :param end: The end of this Experiment.  # noqa: E501
         :type end: str
-        :param duration: The duration of this Experiment.  # noqa: E501
-        :type duration: int
-        :param username: The username of this Experiment.  # noqa: E501
-        :type username: str
         """
         self.swagger_types = {
+            'username': str,
             'experiment': str,
             'project': str,
             'profile': str,
             'cluster': str,
             'start': str,
-            'end': str,
-            'duration': int,
-            'username': str
+            'end': str
         }
 
         self.attribute_map = {
+            'username': 'username',
             'experiment': 'experiment',
             'project': 'project',
             'profile': 'profile',
             'cluster': 'cluster',
             'start': 'start',
-            'end': 'end',
-            'duration': 'duration',
-            'username': 'username'
+            'end': 'end'
         }
+        self._username = username
         self._experiment = experiment
         self._project = project
         self._profile = profile
         self._cluster = cluster
         self._start = start
         self._end = end
-        self._duration = duration
-        self._username = username
 
     @classmethod
     def from_dict(cls, dikt) -> 'Experiment':
@@ -74,6 +69,27 @@ class Experiment(Model):
         :rtype: Experiment
         """
         return util.deserialize_model(dikt, cls)
+
+    @property
+    def username(self) -> str:
+        """Gets the username of this Experiment.
+
+
+        :return: The username of this Experiment.
+        :rtype: str
+        """
+        return self._username
+
+    @username.setter
+    def username(self, username: str):
+        """Sets the username of this Experiment.
+
+
+        :param username: The username of this Experiment.
+        :type username: str
+        """
+
+        self._username = username
 
     @property
     def experiment(self) -> str:
@@ -212,45 +228,3 @@ class Experiment(Model):
             raise ValueError("Invalid value for `end`, must not be `None`")  # noqa: E501
 
         self._end = end
-
-    @property
-    def duration(self) -> int:
-        """Gets the duration of this Experiment.
-
-
-        :return: The duration of this Experiment.
-        :rtype: int
-        """
-        return self._duration
-
-    @duration.setter
-    def duration(self, duration: int):
-        """Sets the duration of this Experiment.
-
-
-        :param duration: The duration of this Experiment.
-        :type duration: int
-        """
-
-        self._duration = duration
-
-    @property
-    def username(self) -> str:
-        """Gets the username of this Experiment.
-
-
-        :return: The username of this Experiment.
-        :rtype: str
-        """
-        return self._username
-
-    @username.setter
-    def username(self, username: str):
-        """Sets the username of this Experiment.
-
-
-        :param username: The username of this Experiment.
-        :type username: str
-        """
-
-        self._username = username
