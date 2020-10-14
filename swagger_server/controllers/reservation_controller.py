@@ -30,7 +30,7 @@ def create_reservation(body, validate=None):  # noqa: E501
 
 
     emulab_cmd = \
-        '{} sudo -u {} manage_reservations reserve {} -N /tmp/testreason -t {} -s {} -e {} {} {}'.format(
+        '{} sudo -u {} manage_reservations reserve {} -N /tmp/testreason -t {} -p emulab -s {} -e {} {} {}'.format(
         emulab.CMD_PREFIX,
         reservation.username,
         check_option,
@@ -103,7 +103,7 @@ def get_reservation(username, cluster=None):  # noqa: E501
             # print(reservation)
             for k in list(record):
                 if not getattr(Reservation, k, None):
-                    print(k + " is ignored")
+                    print(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
             reservation = Reservation(**record)
             reservations.append(reservation)
