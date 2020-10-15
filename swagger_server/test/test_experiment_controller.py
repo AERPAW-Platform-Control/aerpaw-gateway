@@ -16,7 +16,7 @@ class TestExperimentController(BaseTestCase):
     def test_create_experiment(self):
         """Test case for create_experiment
 
-        ceate a experiment
+        create a experiment
         """
         body = Experiment()
         response = self.client.open(
@@ -33,9 +33,8 @@ class TestExperimentController(BaseTestCase):
         delete experiment
         """
         query_string = [('username', 'username_example'),
-                        ('cluster', 'cluster_example'),
                         ('project', 'project_example'),
-                        ('experiment', 789)]
+                        ('experiment', 'experiment_example')]
         response = self.client.open(
             '/ericafu1122/aerpawgateway/1.0.0/experiment',
             method='DELETE',
@@ -63,7 +62,6 @@ class TestExperimentController(BaseTestCase):
         get status of specific experiment
         """
         query_string = [('username', 'username_example'),
-                        ('cluster', 'cluster_example'),
                         ('project', 'project_example')]
         response = self.client.open(
             '/ericafu1122/aerpawgateway/1.0.0/experiment/{experiment}'.format(experiment='experiment_example'),

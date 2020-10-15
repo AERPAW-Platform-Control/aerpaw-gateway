@@ -129,7 +129,7 @@ paths:
           type: string
       - name: project
         in: query
-        description: The project id
+        description: The project name
         required: true
         style: form
         explode: true
@@ -137,7 +137,7 @@ paths:
           type: string
       - name: reservation
         in: query
-        description: reservation id to delete
+        description: reservation uuid to delete
         required: true
         style: form
         explode: true
@@ -219,14 +219,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: cluster
-        in: query
-        description: either cluster name or cluster_urn
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
       - name: project
         in: query
         description: project name
@@ -297,7 +289,7 @@ paths:
     post:
       tags:
       - experiment
-      summary: ceate a experiment
+      summary: create a experiment
       description: instantiate/start experiment
       operationId: create_experiment
       requestBody:
@@ -332,14 +324,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: cluster
-        in: query
-        description: either cluster name or cluster_urn
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
       - name: project
         in: query
         description: project name
@@ -355,9 +339,10 @@ paths:
         style: form
         explode: true
         schema:
-          type: integer
-          format: int64
+          type: string
       responses:
+        "200":
+          description: OK
         "400":
           description: Unknown User
         "404":
@@ -482,12 +467,8 @@ components:
           example: erikaadm
     Experiment:
       required:
-      - cluster
-      - end
       - experiment
-      - profile
       - project
-      - start
       type: object
       properties:
         username:
@@ -511,6 +492,10 @@ components:
         end:
           type: string
           example: "1602566653"
+        status:
+          type: string
+        uuid:
+          type: string
       example:
         cluster: RENCI
         experiment: aerpaw001
@@ -518,7 +503,9 @@ components:
         start: "1602556653"
         project: TestProject1
         end: "1602566653"
+        uuid: uuid
         username: erikaadm
+        status: status
     Reservation:
       required:
       - end

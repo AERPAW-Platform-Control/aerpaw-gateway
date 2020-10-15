@@ -14,7 +14,7 @@ class Experiment(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, username: str=None, experiment: str=None, project: str=None, profile: str=None, cluster: str=None, start: str=None, end: str=None):  # noqa: E501
+    def __init__(self, username: str=None, experiment: str=None, project: str=None, profile: str=None, cluster: str=None, start: str=None, end: str=None, status: str=None, uuid: str=None):  # noqa: E501
         """Experiment - a model defined in Swagger
 
         :param username: The username of this Experiment.  # noqa: E501
@@ -31,6 +31,10 @@ class Experiment(Model):
         :type start: str
         :param end: The end of this Experiment.  # noqa: E501
         :type end: str
+        :param status: The status of this Experiment.  # noqa: E501
+        :type status: str
+        :param uuid: The uuid of this Experiment.  # noqa: E501
+        :type uuid: str
         """
         self.swagger_types = {
             'username': str,
@@ -39,7 +43,9 @@ class Experiment(Model):
             'profile': str,
             'cluster': str,
             'start': str,
-            'end': str
+            'end': str,
+            'status': str,
+            'uuid': str
         }
 
         self.attribute_map = {
@@ -49,7 +55,9 @@ class Experiment(Model):
             'profile': 'profile',
             'cluster': 'cluster',
             'start': 'start',
-            'end': 'end'
+            'end': 'end',
+            'status': 'status',
+            'uuid': 'uuid'
         }
         self._username = username
         self._experiment = experiment
@@ -58,6 +66,8 @@ class Experiment(Model):
         self._cluster = cluster
         self._start = start
         self._end = end
+        self._status = status
+        self._uuid = uuid
 
     @classmethod
     def from_dict(cls, dikt) -> 'Experiment':
@@ -155,8 +165,6 @@ class Experiment(Model):
         :param profile: The profile of this Experiment.
         :type profile: str
         """
-        if profile is None:
-            raise ValueError("Invalid value for `profile`, must not be `None`")  # noqa: E501
 
         self._profile = profile
 
@@ -178,8 +186,6 @@ class Experiment(Model):
         :param cluster: The cluster of this Experiment.
         :type cluster: str
         """
-        if cluster is None:
-            raise ValueError("Invalid value for `cluster`, must not be `None`")  # noqa: E501
 
         self._cluster = cluster
 
@@ -201,8 +207,6 @@ class Experiment(Model):
         :param start: The start of this Experiment.
         :type start: str
         """
-        if start is None:
-            raise ValueError("Invalid value for `start`, must not be `None`")  # noqa: E501
 
         self._start = start
 
@@ -224,7 +228,47 @@ class Experiment(Model):
         :param end: The end of this Experiment.
         :type end: str
         """
-        if end is None:
-            raise ValueError("Invalid value for `end`, must not be `None`")  # noqa: E501
 
         self._end = end
+
+    @property
+    def status(self) -> str:
+        """Gets the status of this Experiment.
+
+
+        :return: The status of this Experiment.
+        :rtype: str
+        """
+        return self._status
+
+    @status.setter
+    def status(self, status: str):
+        """Sets the status of this Experiment.
+
+
+        :param status: The status of this Experiment.
+        :type status: str
+        """
+
+        self._status = status
+
+    @property
+    def uuid(self) -> str:
+        """Gets the uuid of this Experiment.
+
+
+        :return: The uuid of this Experiment.
+        :rtype: str
+        """
+        return self._uuid
+
+    @uuid.setter
+    def uuid(self, uuid: str):
+        """Sets the uuid of this Experiment.
+
+
+        :param uuid: The uuid of this Experiment.
+        :type uuid: str
+        """
+
+        self._uuid = uuid

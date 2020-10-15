@@ -1,5 +1,6 @@
 import connexion
 import six
+import os
 
 from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.experiment import Experiment  # noqa: E501
@@ -8,7 +9,7 @@ from . import emulab
 
 
 def create_experiment(body):  # noqa: E501
-    """ceate a experiment
+    """create a experiment
 
     instantiate/start experiment # noqa: E501
 
@@ -20,14 +21,19 @@ def create_experiment(body):  # noqa: E501
     if connexion.request.is_json:
         req = Experiment.from_dict(connexion.request.get_json())  # noqa: E501
 
+    urn = req.cluster
+    if 'urn' not in urn:
+        urn = os.getenv('URN_' + req.cluster)
+    print(urn)
+
     emulab_cmd = '{} sudo -u {} start-experiment -a {} -w --name {} --project {} {}'.format(
-        emulab.CMD_PREFIX, req.username, req.cluster, req.experiment, req.project, req.profile)
+        emulab.CMD_PREFIX, req.username, urn, req.experiment, req.project, req.profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
     print(emulab_stdout)
     return ApiResponse(code=0, output="Please use getExperiment to check whether success or fail")
 
 
-def delete_experiment(username, project, experiment, cluster=None):  # noqa: E501
+def delete_experiment(username, project, experiment):  # noqa: E501
     """delete experiment
 
     delete/terminate experiment # noqa: E501
@@ -38,12 +44,15 @@ def delete_experiment(username, project, experiment, cluster=None):  # noqa: E50
     :type project: str
     :param experiment: experiment to delete
     :type experiment: int
-    :param cluster: either cluster name or cluster_urn
-    :type cluster: str
+    :type experiment: str
 
     :rtype: None
     """
-    return 'do some magic!'
+    emulab_cmd = '{} sudo -u {} manage_instance terminate {},{}'.format(
+        emulab.CMD_PREFIX, username, project, experiment)
+    emulab_stdout = emulab.send_request(emulab_cmd)
+    print(emulab_stdout)
+    return 'OK'
 
 
 def get_experiments(username, cluster=None):  # noqa: E501
@@ -58,10 +67,10 @@ def get_experiments(username, cluster=None):  # noqa: E501
 
     :rtype: List[Experiment]
     """
-    return 'do some magic!'
+    return 'NOT READY!!'
 
 
-def query_experiment(username, project, experiment, cluster=None):  # noqa: E501
+def query_experiment(username, project, experiment):  # noqa: E501
     """get status of specific experiment
 
     get Experiment status of specific experiment # noqa: E501
@@ -72,14 +81,16 @@ def query_experiment(username, project, experiment, cluster=None):  # noqa: E501
     :type project: str
     :param experiment: experiment name to query
     :type experiment: str
-    :param cluster: either cluster name or cluster_urn
-    :type cluster: str
 
     :rtype: List[Experiment]
     """
     emulab_cmd = '{} sudo -u {} manage_instance status {},{}'.format(
         emulab.CMD_PREFIX, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
-    print(emulab_stdout)
-    return None
+    # example of output: b'Status: ready\nUUID: dc6df64d-0ef9-11eb-9b1f-6cae8b3bf14a\nwbstore: dd41e11e-0ef9-11eb-9b1f-6cae8b3bf14a\n'
+    results = dict(item.split(': ') for item in emulab_stdout.decode('utf-8').split('\n', 2))
+    experiment = Experiment(experiment=experiment, project=project,
+                            status=results['Status'], uuid=results['UUID'])
+    print(results)
+    return experiment
 
