@@ -6,6 +6,7 @@ from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.experiment import Experiment  # noqa: E501
 from swagger_server import util
 from . import emulab
+import json
 
 
 def create_experiment(body):  # noqa: E501
@@ -67,7 +68,24 @@ def get_experiments(username, cluster=None):  # noqa: E501
 
     :rtype: List[Experiment]
     """
-    return 'NOT READY!!'
+
+    emulab_cmd = '{} python ~/aerpaw/list_experiments.py {}'.format(emulab.CMD_PREFIX, username)
+    emulab_stdout = emulab.send_request(emulab_cmd)
+    experiments = []
+    if emulab_stdout:
+        results = json.loads(emulab_stdout)
+        print(results)
+        for record in results:
+            record['experiment'] = record.pop('name')
+            # print(reservation)
+            for k in list(record):
+                if not getattr(Experiment, k, None):
+                    print(k + ":" + str(record[k]) + " is ignored")
+                    del record[k]
+            experiment = Experiment(**record)
+            experiments.append(experiment)
+
+    return experiments
 
 
 def query_experiment(username, project, experiment):  # noqa: E501
