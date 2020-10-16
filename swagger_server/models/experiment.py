@@ -14,13 +14,13 @@ class Experiment(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, username: str=None, experiment: str=None, project: str=None, profile: str=None, cluster: str=None, start: str=None, end: str=None, status: str=None, uuid: str=None):  # noqa: E501
+    def __init__(self, username: str=None, name: str=None, project: str=None, profile: str=None, cluster: str=None, start: str=None, end: str=None, status: str=None, uuid: str=None):  # noqa: E501
         """Experiment - a model defined in Swagger
 
         :param username: The username of this Experiment.  # noqa: E501
         :type username: str
-        :param experiment: The experiment of this Experiment.  # noqa: E501
-        :type experiment: str
+        :param name: The name of this Experiment.  # noqa: E501
+        :type name: str
         :param project: The project of this Experiment.  # noqa: E501
         :type project: str
         :param profile: The profile of this Experiment.  # noqa: E501
@@ -38,7 +38,7 @@ class Experiment(Model):
         """
         self.swagger_types = {
             'username': str,
-            'experiment': str,
+            'name': str,
             'project': str,
             'profile': str,
             'cluster': str,
@@ -50,7 +50,7 @@ class Experiment(Model):
 
         self.attribute_map = {
             'username': 'username',
-            'experiment': 'experiment',
+            'name': 'name',
             'project': 'project',
             'profile': 'profile',
             'cluster': 'cluster',
@@ -60,7 +60,7 @@ class Experiment(Model):
             'uuid': 'uuid'
         }
         self._username = username
-        self._experiment = experiment
+        self._name = name
         self._project = project
         self._profile = profile
         self._cluster = cluster
@@ -102,27 +102,27 @@ class Experiment(Model):
         self._username = username
 
     @property
-    def experiment(self) -> str:
-        """Gets the experiment of this Experiment.
+    def name(self) -> str:
+        """Gets the name of this Experiment.
 
 
-        :return: The experiment of this Experiment.
+        :return: The name of this Experiment.
         :rtype: str
         """
-        return self._experiment
+        return self._name
 
-    @experiment.setter
-    def experiment(self, experiment: str):
-        """Sets the experiment of this Experiment.
+    @name.setter
+    def name(self, name: str):
+        """Sets the name of this Experiment.
 
 
-        :param experiment: The experiment of this Experiment.
-        :type experiment: str
+        :param name: The name of this Experiment.
+        :type name: str
         """
-        if experiment is None:
-            raise ValueError("Invalid value for `experiment`, must not be `None`")  # noqa: E501
+        if name is None:
+            raise ValueError("Invalid value for `name`, must not be `None`")  # noqa: E501
 
-        self._experiment = experiment
+        self._name = name
 
     @property
     def project(self) -> str:

@@ -14,7 +14,7 @@ def create_experiment(body):  # noqa: E501
 
     instantiate/start experiment # noqa: E501
 
-    :param body: Reservation Object
+    :param body: Experiment Object
     :type body: dict | bytes
 
     :rtype: List[ApiResponse]
@@ -28,7 +28,7 @@ def create_experiment(body):  # noqa: E501
     print(urn)
 
     emulab_cmd = '{} sudo -u {} start-experiment -a {} -w --name {} --project {} {}'.format(
-        emulab.CMD_PREFIX, req.username, urn, req.experiment, req.project, req.profile)
+        emulab.CMD_PREFIX, req.username, urn, req.name, req.project, req.profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
     print(emulab_stdout)
     return ApiResponse(code=0, output="Please use getExperiment to check whether success or fail")
@@ -56,28 +56,24 @@ def delete_experiment(username, project, experiment):  # noqa: E501
     return 'OK'
 
 
-def get_experiments(username, cluster=None):  # noqa: E501
+def get_experiments(username):  # noqa: E501
     """get experiment(s) under user
 
     get experiment(s) under user # noqa: E501
 
     :param username: username for the request
     :type username: str
-    :param cluster: either cluster name or cluster_urn
-    :type cluster: str
 
     :rtype: List[Experiment]
     """
 
-    emulab_cmd = '{} python ~/aerpaw/list_experiments.py {}'.format(emulab.CMD_PREFIX, username)
+    emulab_cmd = '{} python ~/aerpaw/querydb.py {} list_experiments'.format(emulab.CMD_PREFIX, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     experiments = []
     if emulab_stdout:
         results = json.loads(emulab_stdout)
         print(results)
         for record in results:
-            record['experiment'] = record.pop('name')
-            # print(reservation)
             for k in list(record):
                 if not getattr(Experiment, k, None):
                     print(k + ":" + str(record[k]) + " is ignored")
@@ -107,7 +103,7 @@ def query_experiment(username, project, experiment):  # noqa: E501
     emulab_stdout = emulab.send_request(emulab_cmd)
     # example of output: b'Status: ready\nUUID: dc6df64d-0ef9-11eb-9b1f-6cae8b3bf14a\nwbstore: dd41e11e-0ef9-11eb-9b1f-6cae8b3bf14a\n'
     results = dict(item.split(': ') for item in emulab_stdout.decode('utf-8').split('\n', 2))
-    experiment = Experiment(experiment=experiment, project=project,
+    experiment = Experiment(name=experiment, project=project,
                             status=results['Status'], uuid=results['UUID'])
     print(results)
     return experiment

@@ -12,7 +12,7 @@ def create_user(body, username):  # noqa: E501
 
      # noqa: E501
 
-    :param body: Reservation Object
+    :param body: User Object
     :type body: dict | bytes
     :param username: username for the request
     :type username: str

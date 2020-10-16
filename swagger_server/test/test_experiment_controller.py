@@ -47,8 +47,7 @@ class TestExperimentController(BaseTestCase):
 
         get experiment(s) under user
         """
-        query_string = [('username', 'username_example'),
-                        ('cluster', 'cluster_example')]
+        query_string = [('username', 'username_example')]
         response = self.client.open(
             '/ericafu1122/aerpawgateway/1.0.0/experiments',
             method='GET',

@@ -264,14 +264,6 @@ paths:
         explode: true
         schema:
           type: string
-      - name: cluster
-        in: query
-        description: either cluster name or cluster_urn
-        required: false
-        style: form
-        explode: true
-        schema:
-          type: string
       responses:
         "200":
           description: successful operation
@@ -450,7 +442,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Experiment'
+                  $ref: '#/components/schemas/Profile'
                 x-content-type: application/json
         "400":
           description: Unknown User
@@ -467,14 +459,14 @@ components:
           example: erikaadm
     Experiment:
       required:
-      - experiment
+      - name
       - project
       type: object
       properties:
         username:
           type: string
           example: erikaadm
-        experiment:
+        name:
           type: string
           example: aerpaw001
         project:
@@ -498,8 +490,8 @@ components:
           type: string
       example:
         cluster: RENCI
-        experiment: aerpaw001
         profile: TestProject1,OneRawPC
+        name: aerpaw001
         start: "1602556653"
         project: TestProject1
         end: "1602566653"
@@ -571,6 +563,38 @@ components:
         code: 0
         logurl: logurl
         value: value
+    Profile:
+      required:
+      - name
+      - project
+      type: object
+      properties:
+        creator:
+          type: string
+          example: erikaadm
+        name:
+          type: string
+          example: profileOneNode
+        project:
+          type: string
+          example: TestProject1
+        version:
+          type: string
+          example: "0"
+        created:
+          type: string
+        repourl:
+          type: string
+        script:
+          type: string
+      example:
+        creator: erikaadm
+        repourl: repourl
+        created: created
+        name: profileOneNode
+        project: TestProject1
+        version: "0"
+        script: script
   requestBodies:
     Reservation:
       description: Reservation Object
@@ -580,17 +604,24 @@ components:
             $ref: '#/components/schemas/Reservation'
       required: true
     Experiment:
-      description: Reservation Object
+      description: Experiment Object
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Experiment'
       required: true
     User:
-      description: Reservation Object
+      description: User Object
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/User'
+      required: true
+    Profile:
+      description: Profile Object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Profile'
       required: true
 
