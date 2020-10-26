@@ -14,7 +14,7 @@ class Profile(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, creator: str=None, name: str=None, project: str=None, version: str=None, created: str=None, repourl: str=None, script: str=None):  # noqa: E501
+    def __init__(self, creator: str=None, name: str=None, project: str=None, version: str=None, created: str=None, repourl: str=None, script: str=None, rspec: str=None, uuid: str=None):  # noqa: E501
         """Profile - a model defined in Swagger
 
         :param creator: The creator of this Profile.  # noqa: E501
@@ -31,6 +31,10 @@ class Profile(Model):
         :type repourl: str
         :param script: The script of this Profile.  # noqa: E501
         :type script: str
+        :param rspec: The rspec of this Profile.  # noqa: E501
+        :type rspec: str
+        :param uuid: The uuid of this Profile.  # noqa: E501
+        :type uuid: str
         """
         self.swagger_types = {
             'creator': str,
@@ -39,7 +43,9 @@ class Profile(Model):
             'version': str,
             'created': str,
             'repourl': str,
-            'script': str
+            'script': str,
+            'rspec': str,
+            'uuid': str
         }
 
         self.attribute_map = {
@@ -49,7 +55,9 @@ class Profile(Model):
             'version': 'version',
             'created': 'created',
             'repourl': 'repourl',
-            'script': 'script'
+            'script': 'script',
+            'rspec': 'rspec',
+            'uuid': 'uuid'
         }
         self._creator = creator
         self._name = name
@@ -58,6 +66,8 @@ class Profile(Model):
         self._created = created
         self._repourl = repourl
         self._script = script
+        self._rspec = rspec
+        self._uuid = uuid
 
     @classmethod
     def from_dict(cls, dikt) -> 'Profile':
@@ -220,3 +230,45 @@ class Profile(Model):
         """
 
         self._script = script
+
+    @property
+    def rspec(self) -> str:
+        """Gets the rspec of this Profile.
+
+
+        :return: The rspec of this Profile.
+        :rtype: str
+        """
+        return self._rspec
+
+    @rspec.setter
+    def rspec(self, rspec: str):
+        """Sets the rspec of this Profile.
+
+
+        :param rspec: The rspec of this Profile.
+        :type rspec: str
+        """
+
+        self._rspec = rspec
+
+    @property
+    def uuid(self) -> str:
+        """Gets the uuid of this Profile.
+
+
+        :return: The uuid of this Profile.
+        :rtype: str
+        """
+        return self._uuid
+
+    @uuid.setter
+    def uuid(self, uuid: str):
+        """Sets the uuid of this Profile.
+
+
+        :param uuid: The uuid of this Profile.
+        :type uuid: str
+        """
+
+        self._uuid = uuid

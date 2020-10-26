@@ -447,6 +447,68 @@ paths:
         "400":
           description: Unknown User
       x-openapi-router-controller: swagger_server.controllers.profile_controller
+    post:
+      tags:
+      - profile
+      summary: create profile
+      description: Create Profile
+      operationId: create_profile
+      requestBody:
+        $ref: '#/components/requestBodies/Profile'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiResponse'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+        "405":
+          description: Invalid input
+      x-openapi-router-controller: swagger_server.controllers.profile_controller
+    delete:
+      tags:
+      - profile
+      summary: delete profile
+      description: delete profile
+      operationId: delete_profile
+      parameters:
+      - name: username
+        in: query
+        description: username for the request
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: project
+        in: query
+        description: project name
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: name of profile to delete
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Unknown User
+        "404":
+          description: Not found
+      x-openapi-router-controller: swagger_server.controllers.profile_controller
 components:
   schemas:
     User:
@@ -587,13 +649,19 @@ components:
           type: string
         script:
           type: string
+        rspec:
+          type: string
+        uuid:
+          type: string
       example:
+        rspec: rspec
         creator: erikaadm
         repourl: repourl
         created: created
         name: profileOneNode
         project: TestProject1
         version: "0"
+        uuid: uuid
         script: script
   requestBodies:
     Reservation:
