@@ -43,7 +43,7 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
 """ use ssh command instead of geni-lib
 def list_resources(username=None, project=None, experiment=None):  # noqa: E501
 
-    emulab_cmd = '{} sudo -u {} /usr/testbed/libexec/ptopgen -x -g 2 -r -f'.format(emulab.CMD_PREFIX, emulab.ADMIN)
+    emulab_cmd = '{} sudo -u {} /usr/testbed/libexec/ptopgen -x -g 2 -r -f'.format(emulab.CMD_PREFIX, username)
     emulab_cmd_args = shlex.split(emulab_cmd)
     try:
         emulab_stdout = subprocess.check_output(emulab_cmd_args, stderr=subprocess.STDOUT)

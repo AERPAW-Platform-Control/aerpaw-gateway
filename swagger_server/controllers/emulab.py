@@ -1,15 +1,23 @@
 import subprocess
 import tempfile
-import os
+import os, stat
 import shlex
 from flask import abort
+import xml.etree.ElementTree as ET
 
-CMD_PREFIX = os.getenv('SSH_CMD')
-ADMIN = os.getenv('EMULAB_ADMIN')
 PARSE_PL_FILE = os.getenv('PARSE_PL_FILE')
+ADMIN_BOSS = os.getenv('ADMIN_BOSS')
+SCP_CMD = 'scp -i {}'.format(os.getenv('SSH_KEY'))
+SSH_CMD = 'ssh -i {} {}'.format(os.getenv('SSH_KEY'), ADMIN_BOSS)
 
 
 def send_request(emulab_cmd):
+    """send_request
+        issue emulab cmd to boss machine of emulab
+
+        :param emulab_cmd: string type
+        :rtype: emulab stdout, string type
+    """
     print(emulab_cmd)
     emulab_cmd_args = shlex.split(emulab_cmd)
     try:
@@ -33,6 +41,12 @@ def send_request(emulab_cmd):
 
 
 def parse_response(emulab_output):
+    """parse_response
+        Parse emulab perl output to json string
+
+        :param emulab_output: string type
+        :rtype: json_string
+    """
     print(emulab_output)
     fp = tempfile.NamedTemporaryFile(delete=False)
     fp.write(emulab_output)
@@ -48,3 +62,93 @@ def parse_response(emulab_output):
     os.unlink(fp.name)
     print(json_string)
     return json_string
+
+
+def create_profile_xml(profile_pid, profile_name, script, profile_listed='1', profile_public='1'):
+    """create_profile_xml
+
+        Create XML file for creating profile in Emulab # noqa: E501
+
+        :param profile_pid: string type
+        :param profile_name: string type
+        :param script: string type
+        :param profile_listed: string type
+        :param profile_public: string type
+
+        :rtype: filename of the generated temporary file
+    """
+
+    # generate rspec from script
+    if script is None:
+        script = open('/Users/ericafu/Documents/Github/aerpaw-gateway/testonepc.py').read()
+        # abort(404, description="script is empty")
+    fp_script = tempfile.NamedTemporaryFile(delete=False)
+    fp_script.write(script.encode())
+    print(script.encode())
+    fp_script.close()
+    rspec = subprocess.check_output(["python3", fp_script.name])
+    print(rspec.decode('utf-8'))
+    os.unlink(fp_script.name)
+
+    # prepare XML
+    profile = ET.Element('profile')
+
+    profile_pid_attr = ET.SubElement(profile, 'attribute')
+    profile_pid_attr.set('name', 'profile_pid')
+    profile_pid_value = ET.SubElement(profile_pid_attr, 'value')
+    profile_pid_value.text = profile_pid
+
+    profile_name_attr = ET.SubElement(profile, 'attribute')
+    profile_name_attr.set('name', 'profile_name')
+    profile_name_value = ET.SubElement(profile_name_attr, 'value')
+    profile_name_value.text = profile_name
+
+    rspec_attr = ET.SubElement(profile, 'attribute')
+    rspec_attr.set('name', 'rspec')
+    rspec_value = ET.SubElement(rspec_attr, 'value')
+    rspec_value.text = rspec.decode('utf-8')
+
+    script_attr = ET.SubElement(profile, 'attribute')
+    script_attr.set('name', 'script')
+    script_value = ET.SubElement(script_attr, 'value')
+    script_value.text = script
+
+    profile_listed_attr = ET.SubElement(profile, 'attribute')
+    profile_listed_attr.set('name', 'profile_listed')
+    profile_listed_value = ET.SubElement(profile_listed_attr, 'value')
+    profile_listed_value.text = profile_listed
+
+    profile_public_attr = ET.SubElement(profile, 'attribute')
+    profile_public_attr.set('name', 'profile_public')
+    profile_public_value = ET.SubElement(profile_public_attr, 'value')
+    profile_public_value.text = profile_public
+
+    xmldata = ET.tostring(profile)
+    print(xmldata)
+
+    xmltmpfile = tempfile.NamedTemporaryFile(delete=False)
+    xmltmpfile.write(xmldata)
+    xmltmpfile.close()
+
+    subprocess.check_output(['chmod', '644', xmltmpfile.name], stderr=subprocess.STDOUT)
+
+    return xmltmpfile.name
+
+
+def send_file(filepath):
+    """send_file
+        issue scp to copy input file to boss machine of emulab
+
+        :param filepath: string type
+        :rtype: xml path in boss
+    """
+    print(filepath)
+    scp_args = shlex.split('{} {} {}:/tmp/'.format(SCP_CMD, filepath, ADMIN_BOSS))
+    # ssh_args = shlex.split('{} chmod 644 /tmp/{}'.format(SSH_CMD, os.path.basename(filepath)))
+    try:
+        subprocess.check_output(scp_args, stderr=subprocess.STDOUT)
+        # subprocess.check_output(ssh_args, stderr=subprocess.STDOUT)
+    except subprocess.CalledProcessError as err:
+        print(err.output)
+        abort(500, description=err.output.decode("utf-8"))
+    return '/tmp/{}'.format(os.path.basename(filepath))

@@ -28,7 +28,7 @@ def create_experiment(body):  # noqa: E501
     print(urn)
 
     emulab_cmd = '{} sudo -u {} start-experiment -a {} -w --name {} --project {} {}'.format(
-        emulab.CMD_PREFIX, req.username, urn, req.name, req.project, req.profile)
+        emulab.SSH_CMD, req.username, urn, req.name, req.project, req.profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
     print(emulab_stdout)
     return ApiResponse(code=0, output="Please use getExperiment to check whether success or fail")
@@ -50,7 +50,7 @@ def delete_experiment(username, project, experiment):  # noqa: E501
     :rtype: None
     """
     emulab_cmd = '{} sudo -u {} manage_instance terminate {},{}'.format(
-        emulab.CMD_PREFIX, username, project, experiment)
+        emulab.SSH_CMD, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
     print(emulab_stdout)
     return 'OK'
@@ -67,7 +67,7 @@ def get_experiments(username):  # noqa: E501
     :rtype: List[Experiment]
     """
 
-    emulab_cmd = '{} python ~/aerpaw/querydb.py {} list_experiments'.format(emulab.CMD_PREFIX, username)
+    emulab_cmd = '{} python ~/aerpaw/querydb.py {} list_experiments'.format(emulab.SSH_CMD, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     experiments = []
     if emulab_stdout:
@@ -99,7 +99,7 @@ def query_experiment(username, project, experiment):  # noqa: E501
     :rtype: List[Experiment]
     """
     emulab_cmd = '{} sudo -u {} manage_instance status {},{}'.format(
-        emulab.CMD_PREFIX, username, project, experiment)
+        emulab.SSH_CMD, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
     # example of output: b'Status: ready\nUUID: dc6df64d-0ef9-11eb-9b1f-6cae8b3bf14a\nwbstore: dd41e11e-0ef9-11eb-9b1f-6cae8b3bf14a\n'
     results = dict(item.split(': ') for item in emulab_stdout.decode('utf-8').split('\n', 2))
