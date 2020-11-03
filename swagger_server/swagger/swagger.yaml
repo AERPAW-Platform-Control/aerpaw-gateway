@@ -195,11 +195,12 @@ paths:
         "200":
           description: OK
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
-                example: rspec advertisement
-                x-content-type: text/plain
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
+                x-content-type: application/json
         "400":
           description: Bad request
       x-openapi-router-controller: swagger_server.controllers.resources_controller
@@ -663,6 +664,69 @@ components:
         version: "0"
         uuid: uuid
         script: script
+    Resource:
+      properties:
+        nodes:
+          $ref: '#/components/schemas/Node'
+        vnodes:
+          $ref: '#/components/schemas/Vnode'
+        rspec:
+          type: string
+      description: Resource in emulab
+      example:
+        rspec: rspec
+        nodes:
+          component_id: urn:publicid:IDN+exogeni.net+node+pc1
+          component_name: pc1
+          type: x3651
+        vnodes:
+          hostname: pc1.exogeni.net
+          disk_image: emulab-ops/UBUNTU16-64-STD:0
+          ipv4: 152.54.13.22
+          name: pc1
+          type: x3651
+    Node:
+      type: object
+      properties:
+        component_name:
+          type: string
+          example: pc1
+        component_id:
+          type: string
+          example: urn:publicid:IDN+exogeni.net+node+pc1
+        type:
+          type: string
+          example: x3651
+      description: Node type of resource
+      example:
+        component_id: urn:publicid:IDN+exogeni.net+node+pc1
+        component_name: pc1
+        type: x3651
+    Vnode:
+      type: object
+      properties:
+        name:
+          type: string
+          example: pc1
+        type:
+          type: string
+          example: x3651
+        disk_image:
+          type: string
+          example: emulab-ops/UBUNTU16-64-STD:0
+        hostname:
+          type: string
+          example: pc1.exogeni.net
+        ipv4:
+          type: string
+          example: 152.54.13.22
+      description: VNode type of resource
+      example:
+        hostname: pc1.exogeni.net
+        disk_image: emulab-ops/UBUNTU16-64-STD:0
+        ipv4: 152.54.13.22
+        name: pc1
+        type: x3651
   requestBodies:
     Reservation:
       description: Reservation Object

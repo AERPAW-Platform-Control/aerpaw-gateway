@@ -1,6 +1,7 @@
 import connexion
 import six
 
+from swagger_server.models.resource import Resource  # noqa: E501
 from swagger_server import util
 import os
 from flask import abort
@@ -21,7 +22,7 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
     :param experiment: if experiment id is given, manifest rspec of the experiment will be returned.
     :type experiment: str
 
-    :rtype: str
+    :rtype: List[Resource]
     """
     context = geni.util.loadContext(key_passphrase=os.getenv('PASSWORD'))
     print(context.cf.key)
