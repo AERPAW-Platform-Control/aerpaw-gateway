@@ -232,7 +232,7 @@ class Context(object):
         cred = self.cf.getUserCredentials(self.userurn)
 
         f = open(ucpath, "wb+")
-        f.write(cred)
+        f.write(cred.encode())
         f.close()
 
       (expires, urn, typ, version) = self._getCredInfo(ucpath)
