@@ -4,6 +4,11 @@ import os, stat
 import shlex
 from flask import abort
 import xml.etree.ElementTree as ET
+import geni.util
+import geni.aggregate.cloudlab
+import geni.aggregate.pgutil
+from swagger_server.models.node import Node  # noqa: F401,E501
+from swagger_server.models.vnode import Vnode  # noqa: F401,E501
 
 PARSE_PL_FILE = os.getenv('PARSE_PL_FILE')
 ADMIN_BOSS = os.getenv('ADMIN_BOSS')
@@ -79,9 +84,11 @@ def create_profile_xml(profile_pid, profile_name, script, profile_listed='1', pr
     """
 
     # generate rspec from script
+    """
     if script is None:
         script = open('/Users/ericafu/Documents/Github/aerpaw-gateway/testonepc.py').read()
         # abort(404, description="script is empty")
+    """
     fp_script = tempfile.NamedTemporaryFile(delete=False)
     fp_script.write(script.encode())
     print(script.encode())
@@ -152,3 +159,65 @@ def send_file(filepath):
         print(err.output)
         abort(500, description=err.output.decode("utf-8"))
     return '/tmp/{}'.format(os.path.basename(filepath))
+
+
+def get_reservable_nodes(ad):
+    """get_reservable_nodes
+
+    """
+    rspecfile = tempfile.NamedTemporaryFile(delete=False)
+    rspecfile.write(ad.text.encode())
+    rspecfile.close()
+    tree = ET.parse(rspecfile.name)
+    os.unlink(rspecfile.name)
+    root = tree.getroot()
+    # find the element has reservable_types
+    e = root.find(".//{http://www.protogeni.net/resources/rspec/ext/emulab/1}reservable_types")
+    reservable_type = e[0].attrib['name']
+
+    reservable_nodes = []
+    for node in ad.nodes:
+        if reservable_type in node.hardware_types:
+            reservable_node = Node(component_name=node.name,
+                                   component_id=node.component_id,
+                                   type=reservable_type)
+            reservable_nodes.append(reservable_node)
+    return reservable_nodes
+
+
+def parse_manifest(ad):
+    """parse_manifest
+
+    """
+    rspecfile = tempfile.NamedTemporaryFile(delete=False)
+    rspecfile.write(ad.text.encode())
+    rspecfile.close()
+    tree = ET.parse(rspecfile.name)
+    os.unlink(rspecfile.name)
+    root = tree.getroot()
+    # find the element has reservable_types
+    nodes = root.findall(".//{http://www.geni.net/resources/rspec/3}node")
+
+    nodelist = []
+    for node in nodes:
+        client_id = node.attrib['client_id'] # eg. 'node1'
+        # component_id = node.attrib['component_id']
+        # sliver_id = node.attrib['sliver_id']
+
+        element_slivertype = node.find(".//{http://www.geni.net/resources/rspec/3}sliver_type")
+        slivertype = element_slivertype.attrib['name']
+
+        # element_interface = node.find(".//{http://www.geni.net/resources/rspec/3}interface")
+        element_vnode = node.find(".//{http://www.protogeni.net/resources/rspec/ext/emulab/1}vnode")
+        element_host = node.find(".//{http://www.geni.net/resources/rspec/3}host")
+        element_login = node.find(
+            ".//{http://www.geni.net/resources/rspec/3}services//{http://www.geni.net/resources/rspec/3}login")
+        newnode = Vnode(name=client_id,                     # 'node1'
+                        node=element_vnode.attrib['name'],  # 'pc1' or 'pc2'
+                        type=slivertype,                    # 'raw-pc'
+                        hardware_type=element_vnode.attrib['hardware_type'],  # 'x3651'
+                        disk_image=element_vnode.attrib['disk_image'],
+                        hostname=element_login.attrib['hostname'],
+                        ipv4=element_host.attrib['ipv4'])
+        nodelist.append(newnode)
+    return nodelist

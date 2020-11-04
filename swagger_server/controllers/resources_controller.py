@@ -5,6 +5,7 @@ from swagger_server.models.resource import Resource  # noqa: E501
 from swagger_server import util
 import os
 from flask import abort
+from . import emulab
 import geni.util
 import geni.aggregate.cloudlab
 import geni.aggregate.pgutil as ProtoGENI
@@ -32,13 +33,15 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
             urn = 'urn:publicid:IDN+exogeni.net:{}+slice+{}'.format(project, experiment)
             print(urn)
             ad = geni.aggregate.cloudlab.Renci.listresources(context, urn)
+            vnodes = emulab.parse_manifest(ad)
+            resources = Resource(rspec=ad.text, vnodes=vnodes)
         else:
             ad = geni.aggregate.cloudlab.Renci.listresources(context)
+            reservable = emulab.get_reservable_nodes(ad)
+            resources = Resource(rspec=ad.text, nodes=reservable)
     except ProtoGENI.AMError as err:
         abort(400, description=err.text)
-
-        # maybe we want to parse the rspec and check username before return?
-    return ad.text
+    return resources
 
 
 """ use ssh command instead of geni-lib
