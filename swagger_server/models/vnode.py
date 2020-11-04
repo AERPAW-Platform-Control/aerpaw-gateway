@@ -14,13 +14,17 @@ class Vnode(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: str=None, type: str=None, disk_image: str=None, hostname: str=None, ipv4: str=None):  # noqa: E501
+    def __init__(self, name: str=None, node: str=None, type: str=None, hardware_type: str=None, disk_image: str=None, hostname: str=None, ipv4: str=None):  # noqa: E501
         """Vnode - a model defined in Swagger
 
         :param name: The name of this Vnode.  # noqa: E501
         :type name: str
+        :param node: The node of this Vnode.  # noqa: E501
+        :type node: str
         :param type: The type of this Vnode.  # noqa: E501
         :type type: str
+        :param hardware_type: The hardware_type of this Vnode.  # noqa: E501
+        :type hardware_type: str
         :param disk_image: The disk_image of this Vnode.  # noqa: E501
         :type disk_image: str
         :param hostname: The hostname of this Vnode.  # noqa: E501
@@ -30,7 +34,9 @@ class Vnode(Model):
         """
         self.swagger_types = {
             'name': str,
+            'node': str,
             'type': str,
+            'hardware_type': str,
             'disk_image': str,
             'hostname': str,
             'ipv4': str
@@ -38,13 +44,17 @@ class Vnode(Model):
 
         self.attribute_map = {
             'name': 'name',
+            'node': 'node',
             'type': 'type',
+            'hardware_type': 'hardware_type',
             'disk_image': 'disk_image',
             'hostname': 'hostname',
             'ipv4': 'ipv4'
         }
         self._name = name
+        self._node = node
         self._type = type
+        self._hardware_type = hardware_type
         self._disk_image = disk_image
         self._hostname = hostname
         self._ipv4 = ipv4
@@ -82,6 +92,27 @@ class Vnode(Model):
         self._name = name
 
     @property
+    def node(self) -> str:
+        """Gets the node of this Vnode.
+
+
+        :return: The node of this Vnode.
+        :rtype: str
+        """
+        return self._node
+
+    @node.setter
+    def node(self, node: str):
+        """Sets the node of this Vnode.
+
+
+        :param node: The node of this Vnode.
+        :type node: str
+        """
+
+        self._node = node
+
+    @property
     def type(self) -> str:
         """Gets the type of this Vnode.
 
@@ -101,6 +132,27 @@ class Vnode(Model):
         """
 
         self._type = type
+
+    @property
+    def hardware_type(self) -> str:
+        """Gets the hardware_type of this Vnode.
+
+
+        :return: The hardware_type of this Vnode.
+        :rtype: str
+        """
+        return self._hardware_type
+
+    @hardware_type.setter
+    def hardware_type(self, hardware_type: str):
+        """Sets the hardware_type of this Vnode.
+
+
+        :param hardware_type: The hardware_type of this Vnode.
+        :type hardware_type: str
+        """
+
+        self._hardware_type = hardware_type
 
     @property
     def disk_image(self) -> str:

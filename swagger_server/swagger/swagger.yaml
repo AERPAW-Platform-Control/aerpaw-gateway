@@ -628,8 +628,10 @@ components:
         value: value
     Profile:
       required:
+      - creator
       - name
       - project
+      - script
       type: object
       properties:
         creator:
@@ -646,10 +648,32 @@ components:
           example: "0"
         created:
           type: string
-        repourl:
-          type: string
         script:
           type: string
+          example: |
+            """One raw PC running the default OS.
+
+            Instructions:
+            Log into your PC and poke around. You have root access via `sudo`. Any work you do on your PC will be lost when it terminates."""
+
+            # Import the Portal object.
+            import geni.portal as portal
+            # Import the ProtoGENI library.
+            import geni.rspec.pg as pg
+            # Import the Emulab specific extensions.
+            import geni.rspec.emulab as emulab
+
+            # Create a portal object,
+            pc = portal.Context()
+
+            # Create a Request object to start building the RSpec.
+            request = pc.makeRequestRSpec()
+
+            # Node node1
+            node1 = request.RawPC('node1')
+
+            # Print the generated rspec
+            pc.printRequestRSpec(request)
         rspec:
           type: string
         uuid:
@@ -657,13 +681,35 @@ components:
       example:
         rspec: rspec
         creator: erikaadm
-        repourl: repourl
         created: created
         name: profileOneNode
         project: TestProject1
         version: "0"
         uuid: uuid
-        script: script
+        script: |
+          """One raw PC running the default OS.
+
+          Instructions:
+          Log into your PC and poke around. You have root access via `sudo`. Any work you do on your PC will be lost when it terminates."""
+
+          # Import the Portal object.
+          import geni.portal as portal
+          # Import the ProtoGENI library.
+          import geni.rspec.pg as pg
+          # Import the Emulab specific extensions.
+          import geni.rspec.emulab as emulab
+
+          # Create a portal object,
+          pc = portal.Context()
+
+          # Create a Request object to start building the RSpec.
+          request = pc.makeRequestRSpec()
+
+          # Node node1
+          node1 = request.RawPC('node1')
+
+          # Print the generated rspec
+          pc.printRequestRSpec(request)
     Resource:
       properties:
         nodes:
@@ -680,11 +726,13 @@ components:
           component_name: pc1
           type: x3651
         vnodes:
+          node: pc1
           hostname: pc1.exogeni.net
           disk_image: emulab-ops/UBUNTU16-64-STD:0
           ipv4: 152.54.13.22
-          name: pc1
-          type: x3651
+          hardware_type: x3651
+          name: node1
+          type: raw-pc
     Node:
       type: object
       properties:
@@ -707,8 +755,14 @@ components:
       properties:
         name:
           type: string
+          example: node1
+        node:
+          type: string
           example: pc1
         type:
+          type: string
+          example: raw-pc
+        hardware_type:
           type: string
           example: x3651
         disk_image:
@@ -722,11 +776,13 @@ components:
           example: 152.54.13.22
       description: VNode type of resource
       example:
+        node: pc1
         hostname: pc1.exogeni.net
         disk_image: emulab-ops/UBUNTU16-64-STD:0
         ipv4: 152.54.13.22
-        name: pc1
-        type: x3651
+        hardware_type: x3651
+        name: node1
+        type: raw-pc
   requestBodies:
     Reservation:
       description: Reservation Object

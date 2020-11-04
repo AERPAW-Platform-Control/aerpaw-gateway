@@ -14,7 +14,7 @@ class Profile(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, creator: str=None, name: str=None, project: str=None, version: str=None, created: str=None, repourl: str=None, script: str=None, rspec: str=None, uuid: str=None):  # noqa: E501
+    def __init__(self, creator: str=None, name: str=None, project: str=None, version: str=None, created: str=None, script: str=None, rspec: str=None, uuid: str=None):  # noqa: E501
         """Profile - a model defined in Swagger
 
         :param creator: The creator of this Profile.  # noqa: E501
@@ -27,8 +27,6 @@ class Profile(Model):
         :type version: str
         :param created: The created of this Profile.  # noqa: E501
         :type created: str
-        :param repourl: The repourl of this Profile.  # noqa: E501
-        :type repourl: str
         :param script: The script of this Profile.  # noqa: E501
         :type script: str
         :param rspec: The rspec of this Profile.  # noqa: E501
@@ -42,7 +40,6 @@ class Profile(Model):
             'project': str,
             'version': str,
             'created': str,
-            'repourl': str,
             'script': str,
             'rspec': str,
             'uuid': str
@@ -54,7 +51,6 @@ class Profile(Model):
             'project': 'project',
             'version': 'version',
             'created': 'created',
-            'repourl': 'repourl',
             'script': 'script',
             'rspec': 'rspec',
             'uuid': 'uuid'
@@ -64,7 +60,6 @@ class Profile(Model):
         self._project = project
         self._version = version
         self._created = created
-        self._repourl = repourl
         self._script = script
         self._rspec = rspec
         self._uuid = uuid
@@ -98,6 +93,8 @@ class Profile(Model):
         :param creator: The creator of this Profile.
         :type creator: str
         """
+        if creator is None:
+            raise ValueError("Invalid value for `creator`, must not be `None`")  # noqa: E501
 
         self._creator = creator
 
@@ -190,27 +187,6 @@ class Profile(Model):
         self._created = created
 
     @property
-    def repourl(self) -> str:
-        """Gets the repourl of this Profile.
-
-
-        :return: The repourl of this Profile.
-        :rtype: str
-        """
-        return self._repourl
-
-    @repourl.setter
-    def repourl(self, repourl: str):
-        """Sets the repourl of this Profile.
-
-
-        :param repourl: The repourl of this Profile.
-        :type repourl: str
-        """
-
-        self._repourl = repourl
-
-    @property
     def script(self) -> str:
         """Gets the script of this Profile.
 
@@ -228,6 +204,8 @@ class Profile(Model):
         :param script: The script of this Profile.
         :type script: str
         """
+        if script is None:
+            raise ValueError("Invalid value for `script`, must not be `None`")  # noqa: E501
 
         self._script = script
 
