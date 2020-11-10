@@ -7,13 +7,18 @@ import xml.etree.ElementTree as ET
 import geni.util
 import geni.aggregate.cloudlab
 import geni.aggregate.pgutil
+import time
 from swagger_server.models.node import Node  # noqa: F401,E501
 from swagger_server.models.vnode import Vnode  # noqa: F401,E501
+from pathlib import Path
+
 
 PARSE_PL_FILE = os.getenv('PARSE_PL_FILE')
 ADMIN_BOSS = os.getenv('ADMIN_BOSS')
 SCP_CMD = 'scp -i {}'.format(os.getenv('SSH_KEY'))
 SSH_CMD = 'ssh -i {} {}'.format(os.getenv('SSH_KEY'), ADMIN_BOSS)
+usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()),
+                                                                  os.getenv('GENILIB_USER'))
 
 
 def send_request(emulab_cmd):
@@ -159,6 +164,20 @@ def send_file(filepath):
         print(err.output)
         abort(500, description=err.output.decode("utf-8"))
     return '/tmp/{}'.format(os.path.basename(filepath))
+
+
+def maybe_renew_genicred():
+    if os.path.exists(usercred_file):
+        elapsed = time.time() - maybe_renew_genicred.timestamp
+        print('last renew time : {}'.format(
+            time.asctime(time.localtime(maybe_renew_genicred.timestamp))))
+        if elapsed > 24 * 60 * 55:  # the credential will expire in one day
+            os.remove(usercred_file)
+            print('Removed old cert file ' + usercred_file)
+            maybe_renew_genicred.timestamp = time.time()
+
+
+maybe_renew_genicred.timestamp = time.time()
 
 
 def get_reservable_nodes(ad):
