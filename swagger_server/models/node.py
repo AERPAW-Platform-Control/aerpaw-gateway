@@ -14,7 +14,7 @@ class Node(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, component_name: str=None, component_id: str=None, type: str=None):  # noqa: E501
+    def __init__(self, component_name: str=None, component_id: str=None, type: str=None, free: bool=None):  # noqa: E501
         """Node - a model defined in Swagger
 
         :param component_name: The component_name of this Node.  # noqa: E501
@@ -23,21 +23,26 @@ class Node(Model):
         :type component_id: str
         :param type: The type of this Node.  # noqa: E501
         :type type: str
+        :param free: The free of this Node.  # noqa: E501
+        :type free: bool
         """
         self.swagger_types = {
             'component_name': str,
             'component_id': str,
-            'type': str
+            'type': str,
+            'free': bool
         }
 
         self.attribute_map = {
             'component_name': 'component_name',
             'component_id': 'component_id',
-            'type': 'type'
+            'type': 'type',
+            'free': 'free'
         }
         self._component_name = component_name
         self._component_id = component_id
         self._type = type
+        self._free = free
 
     @classmethod
     def from_dict(cls, dikt) -> 'Node':
@@ -112,3 +117,24 @@ class Node(Model):
         """
 
         self._type = type
+
+    @property
+    def free(self) -> bool:
+        """Gets the free of this Node.
+
+
+        :return: The free of this Node.
+        :rtype: bool
+        """
+        return self._free
+
+    @free.setter
+    def free(self, free: bool):
+        """Sets the free of this Node.
+
+
+        :param free: The free of this Node.
+        :type free: bool
+        """
+
+        self._free = free
