@@ -1,6 +1,6 @@
 import subprocess
 import tempfile
-import os, stat
+import os
 import shlex
 from flask import abort
 import xml.etree.ElementTree as ET
@@ -180,7 +180,9 @@ def get_reservable_nodes(ad):
         if reservable_type in node.hardware_types:
             reservable_node = Node(component_name=node.name,
                                    component_id=node.component_id,
-                                   type=reservable_type)
+                                   type=reservable_type,
+                                   available=node.available)
+            # print(dir(node))
             reservable_nodes.append(reservable_node)
     return reservable_nodes
 
