@@ -14,7 +14,7 @@ class Node(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, component_name: str=None, component_id: str=None, type: str=None, free: bool=None):  # noqa: E501
+    def __init__(self, component_name: str=None, component_id: str=None, type: str=None, available: bool=None):  # noqa: E501
         """Node - a model defined in Swagger
 
         :param component_name: The component_name of this Node.  # noqa: E501
@@ -23,26 +23,26 @@ class Node(Model):
         :type component_id: str
         :param type: The type of this Node.  # noqa: E501
         :type type: str
-        :param free: The free of this Node.  # noqa: E501
-        :type free: bool
+        :param available: The available of this Node.  # noqa: E501
+        :type available: bool
         """
         self.swagger_types = {
             'component_name': str,
             'component_id': str,
             'type': str,
-            'free': bool
+            'available': bool
         }
 
         self.attribute_map = {
             'component_name': 'component_name',
             'component_id': 'component_id',
             'type': 'type',
-            'free': 'free'
+            'available': 'available'
         }
         self._component_name = component_name
         self._component_id = component_id
         self._type = type
-        self._free = free
+        self._available = available
 
     @classmethod
     def from_dict(cls, dikt) -> 'Node':
@@ -119,22 +119,22 @@ class Node(Model):
         self._type = type
 
     @property
-    def free(self) -> bool:
-        """Gets the free of this Node.
+    def available(self) -> bool:
+        """Gets the available of this Node.
 
 
-        :return: The free of this Node.
+        :return: The available of this Node.
         :rtype: bool
         """
-        return self._free
+        return self._available
 
-    @free.setter
-    def free(self, free: bool):
-        """Sets the free of this Node.
+    @available.setter
+    def available(self, available: bool):
+        """Sets the available of this Node.
 
 
-        :param free: The free of this Node.
-        :type free: bool
+        :param available: The available of this Node.
+        :type available: bool
         """
 
-        self._free = free
+        self._available = available

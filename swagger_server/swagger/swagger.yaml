@@ -724,8 +724,8 @@ components:
         nodes:
           component_id: urn:publicid:IDN+exogeni.net+node+pc1
           component_name: pc1
+          available: true
           type: x3651
-          free: true
         vnodes:
           node: pc1
           hostname: pc1.exogeni.net
@@ -746,15 +746,15 @@ components:
         type:
           type: string
           example: x3651
-        free:
+        available:
           type: boolean
           example: true
       description: Node type of resource
       example:
         component_id: urn:publicid:IDN+exogeni.net+node+pc1
         component_name: pc1
+        available: true
         type: x3651
-        free: true
     Vnode:
       type: object
       properties:
