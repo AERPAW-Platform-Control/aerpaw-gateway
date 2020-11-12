@@ -20,7 +20,7 @@ class TestProfileController(BaseTestCase):
         """
         body = Profile()
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/profile',
+            '/aerpawgateway/1.0.0/profile',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -36,7 +36,7 @@ class TestProfileController(BaseTestCase):
                         ('project', 'project_example'),
                         ('name', 'name_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/profile',
+            '/aerpawgateway/1.0.0/profile',
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -49,7 +49,7 @@ class TestProfileController(BaseTestCase):
         """
         query_string = [('username', 'username_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/profile',
+            '/aerpawgateway/1.0.0/profile',
             method='GET',
             query_string=query_string)
         self.assert200(response,

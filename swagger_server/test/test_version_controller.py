@@ -17,7 +17,7 @@ class TestVersionController(BaseTestCase):
         API version
         """
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/version',
+            '/aerpawgateway/1.0.0/version',
             method='GET')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))

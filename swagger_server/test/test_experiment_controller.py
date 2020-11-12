@@ -20,7 +20,7 @@ class TestExperimentController(BaseTestCase):
         """
         body = Experiment()
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/experiment',
+            '/aerpawgateway/1.0.0/experiment',
             method='POST',
             data=json.dumps(body),
             content_type='application/json')
@@ -36,7 +36,7 @@ class TestExperimentController(BaseTestCase):
                         ('project', 'project_example'),
                         ('experiment', 'experiment_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/experiment',
+            '/aerpawgateway/1.0.0/experiment',
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -49,7 +49,7 @@ class TestExperimentController(BaseTestCase):
         """
         query_string = [('username', 'username_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/experiments',
+            '/aerpawgateway/1.0.0/experiments',
             method='GET',
             query_string=query_string)
         self.assert200(response,
@@ -63,7 +63,7 @@ class TestExperimentController(BaseTestCase):
         query_string = [('username', 'username_example'),
                         ('project', 'project_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/experiment/{experiment}'.format(experiment='experiment_example'),
+            '/aerpawgateway/1.0.0/experiment/{experiment}'.format(experiment='experiment_example'),
             method='GET',
             query_string=query_string)
         self.assert200(response,

@@ -21,7 +21,7 @@ class TestReservationController(BaseTestCase):
         body = Reservation()
         query_string = [('validate', true)]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/reservation',
+            '/aerpawgateway/1.0.0/reservation',
             method='POST',
             data=json.dumps(body),
             content_type='application/json',
@@ -39,7 +39,7 @@ class TestReservationController(BaseTestCase):
                         ('project', 'project_example'),
                         ('reservation', 'reservation_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/reservation',
+            '/aerpawgateway/1.0.0/reservation',
             method='DELETE',
             query_string=query_string)
         self.assert200(response,
@@ -53,7 +53,7 @@ class TestReservationController(BaseTestCase):
         query_string = [('username', 'username_example'),
                         ('cluster', 'cluster_example')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/reservation',
+            '/aerpawgateway/1.0.0/reservation',
             method='GET',
             query_string=query_string)
         self.assert200(response,

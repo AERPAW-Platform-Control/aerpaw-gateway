@@ -21,7 +21,7 @@ class TestResourcesController(BaseTestCase):
                         ('project', 'TestProject1'),
                         ('experiment', 'aerpaw001')]
         response = self.client.open(
-            '/ericafu1122/aerpawgateway/1.0.0/resources',
+            '/aerpawgateway/1.0.0/resources',
             method='GET',
             query_string=query_string)
         self.assert200(response,

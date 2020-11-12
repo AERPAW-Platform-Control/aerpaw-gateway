@@ -13,7 +13,7 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 servers:
-- url: http://0.0.0.0:8080/ericafu1122/aerpawgateway/1.0.0
+- url: http://0.0.0.0:8080/aerpawgateway/1.0.0
   description: Localhost
 - url: https://virtserver.swaggerhub.com/ericafu1122/aerpawgateway/1.0.0
   description: SwaggerHub API Auto Mocking
@@ -32,7 +32,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                example: 0.0.1
+                example: 1.0.0
                 x-content-type: text/plain
       x-openapi-router-controller: swagger_server.controllers.version_controller
   /reservation:
