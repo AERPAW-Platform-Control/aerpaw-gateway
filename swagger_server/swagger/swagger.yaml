@@ -519,7 +519,7 @@ components:
       properties:
         username:
           type: string
-          example: erikaadm
+          example: erika
     Experiment:
       required:
       - name
@@ -528,7 +528,7 @@ components:
       properties:
         username:
           type: string
-          example: erikaadm
+          example: erika
         name:
           type: string
           example: aerpaw001
@@ -559,7 +559,7 @@ components:
         project: TestProject1
         end: "1602566653"
         uuid: uuid
-        username: erikaadm
+        username: erika
         status: status
     Reservation:
       required:
@@ -574,7 +574,7 @@ components:
       properties:
         username:
           type: string
-          example: erikaadm
+          example: erika
         project:
           type: string
           example: TestProject1
@@ -608,7 +608,7 @@ components:
         end: "1602576653"
         type: x3651
         uuid: uuid
-        username: erikaadm
+        username: erika
     ApiResponse:
       type: object
       properties:
@@ -636,7 +636,7 @@ components:
       properties:
         creator:
           type: string
-          example: erikaadm
+          example: erika
         name:
           type: string
           example: profileOneNode
@@ -680,7 +680,7 @@ components:
           type: string
       example:
         rspec: rspec
-        creator: erikaadm
+        creator: erika
         created: created
         name: profileOneNode
         project: TestProject1
