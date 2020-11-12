@@ -8,6 +8,7 @@ from six import BytesIO
 from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.reservation import Reservation  # noqa: E501
 from swagger_server.test import BaseTestCase
+from datetime import datetime
 
 
 class TestReservationController(BaseTestCase):
@@ -18,8 +19,12 @@ class TestReservationController(BaseTestCase):
 
         create reservation
         """
-        body = Reservation()
-        query_string = [('validate', true)]
+        start = int(datetime.utcnow().timestamp())
+        end = start + 60 * 60 * 10  # 10 hours
+        body = Reservation(cluster='RENCI', experiment='aerpaw-unittest', nodes=1,
+                           project='TestProject1', start=str(start), end=str(end), type='x3651',
+                           username='erikafu')
+        query_string = [('validate', 'false')]
         response = self.client.open(
             '/aerpawgateway/1.0.0/reservation',
             method='POST',
@@ -34,10 +39,10 @@ class TestReservationController(BaseTestCase):
 
         delete reservation
         """
-        query_string = [('username', 'username_example'),
-                        ('cluster', 'cluster_example'),
-                        ('project', 'project_example'),
-                        ('reservation', 'reservation_example')]
+        query_string = [('username', 'erikafu'),
+                        ('cluster', 'RENCI'),
+                        ('project', 'TestProject1'),
+                        ('reservation', '160ff144-2523-11eb-a596-6cae8b3bf14a')]
         response = self.client.open(
             '/aerpawgateway/1.0.0/reservation',
             method='DELETE',
@@ -50,8 +55,8 @@ class TestReservationController(BaseTestCase):
 
         get reservation under user
         """
-        query_string = [('username', 'username_example'),
-                        ('cluster', 'cluster_example')]
+        query_string = [('username', 'erikafu'),
+                        ('cluster', 'RENCI')]
         response = self.client.open(
             '/aerpawgateway/1.0.0/reservation',
             method='GET',

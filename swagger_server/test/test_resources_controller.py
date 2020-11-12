@@ -17,9 +17,22 @@ class TestResourcesController(BaseTestCase):
 
         list resources
         """
-        query_string = [('username', 'erikaadm'),
+        query_string = [('username', 'erikafu')]
+        response = self.client.open(
+            '/aerpawgateway/1.0.0/resources',
+            method='GET',
+            query_string=query_string)
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
+    def test_manifest(self):
+        """Test case for list_resources
+
+        list resources
+        """
+        query_string = [('username', 'erikafu'),
                         ('project', 'TestProject1'),
-                        ('experiment', 'aerpaw001')]
+                        ('experiment', 'aerpaw-unittest')]
         response = self.client.open(
             '/aerpawgateway/1.0.0/resources',
             method='GET',
