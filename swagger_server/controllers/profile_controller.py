@@ -7,6 +7,9 @@ from swagger_server import util
 from . import emulab
 import json
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_profile(body):  # noqa: E501
@@ -30,7 +33,7 @@ def create_profile(body):  # noqa: E501
 
     # clean up the temporary files
     os.unlink(xmlfile)
-    emulab_cmd = '{} rm {}'.format(emulab.SSH_CMD, xmlpath)
+    emulab_cmd = '{} sudo rm {}'.format(emulab.SSH_CMD, xmlpath)
     emulab.send_request(emulab_cmd)
 
     response = ApiResponse(code=0,
@@ -70,16 +73,16 @@ def get_profile(username):  # noqa: E501
 
     :rtype: List[Profile]
     """
-    emulab_cmd = '{} python ~/aerpaw/querydb.py {} list_profiles'.format(emulab.SSH_CMD, username)
+    emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_profiles'.format(emulab.SSH_CMD, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     profiles = []
     if emulab_stdout:
         results = json.loads(emulab_stdout)
-        print(results)
+        logger.info(results)
         for record in results:
             for k in list(record):
                 if not getattr(Profile, k, None):
-                    print(k + ":" + str(record[k]) + " is ignored")
+                    logger.info(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
             profile = Profile(**record)
             profiles.append(profile)

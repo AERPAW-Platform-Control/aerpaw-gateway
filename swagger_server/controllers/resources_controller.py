@@ -9,6 +9,9 @@ from . import emulab
 import geni.util
 import geni.aggregate.cloudlab
 import geni.aggregate.pgutil as ProtoGENI
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def list_resources(username=None, project=None, experiment=None):  # noqa: E501
@@ -25,18 +28,20 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
 
     :rtype: List[Resource]
     """
-    context = geni.util.loadContext(key_passphrase=os.getenv('PASSWORD'))
-    print(context.cf.key)
-    print(context.cf.cert)
+    context = geni.util.loadContext(key_passphrase=os.getenv('EMULAB_PASSWORD'))
+    logger.debug(context.cf.key)
+    logger.debug(context.cf.cert)
     try:
         emulab.maybe_renew_genicred()  # renew credential every 24 hour
         if project and experiment:
+            logger.info('query manifest for experiment')
             urn = 'urn:publicid:IDN+exogeni.net:{}+slice+{}'.format(project, experiment)
-            print(urn)
+            logger.info('urn = {}'.format(urn))
             ad = geni.aggregate.cloudlab.Renci.listresources(context, urn)
             vnodes = emulab.parse_manifest(ad)
             resources = Resource(rspec=ad.text, vnodes=vnodes)
         else:
+            logger.info('list resources')
             ad = geni.aggregate.cloudlab.Renci.listresources(context)
             reservable = emulab.get_reservable_nodes(ad)
             resources = Resource(rspec=ad.text, nodes=reservable)

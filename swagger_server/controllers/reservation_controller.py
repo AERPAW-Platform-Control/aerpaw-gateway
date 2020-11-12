@@ -7,6 +7,9 @@ from datetime import datetime
 from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.reservation import Reservation  # noqa: E501
 from swagger_server import util
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_reservation(body, validate=None):  # noqa: E501
@@ -23,7 +26,7 @@ def create_reservation(body, validate=None):  # noqa: E501
     """
     if connexion.request.is_json:
         reservation = Reservation.from_dict(connexion.request.get_json())  # noqa: E501
-        print(reservation)
+        logger.info(reservation)
     check_option = ''
     if validate:
         check_option = '-n'
@@ -103,7 +106,7 @@ def get_reservation(username, cluster=None):  # noqa: E501
             # print(reservation)
             for k in list(record):
                 if not getattr(Reservation, k, None):
-                    print(k + ":" + str(record[k]) + " is ignored")
+                    logger.info(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
             reservation = Reservation(**record)
             reservations.append(reservation)

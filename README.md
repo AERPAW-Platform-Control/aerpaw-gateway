@@ -51,5 +51,11 @@ To run the server on a Docker container, please execute the following from the r
 docker build -t swagger_server .
 
 # starting up a container
-docker run -p 8080:8080 swagger_server
+docker run --rm -it \
+    --env-file .env \
+    -p 127.0.0.1:8080:8080 \
+    -v ~/.ssh/id_emulab_rsa:/root/.ssh/id_rsa:ro \
+    -v ~/.bssw/geni-docker:/root/.bssw/geni/ \
+    swagger_server
+
 ```

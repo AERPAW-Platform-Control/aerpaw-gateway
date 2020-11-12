@@ -11,14 +11,15 @@ import time
 from swagger_server.models.node import Node  # noqa: F401,E501
 from swagger_server.models.vnode import Vnode  # noqa: F401,E501
 from pathlib import Path
-
+import logging
 
 PARSE_PL_FILE = os.getenv('PARSE_PL_FILE')
-ADMIN_BOSS = os.getenv('ADMIN_BOSS')
-SCP_CMD = 'scp -i {}'.format(os.getenv('SSH_KEY'))
-SSH_CMD = 'ssh -i {} {}'.format(os.getenv('SSH_KEY'), ADMIN_BOSS)
-usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()),
-                                                                  os.getenv('GENILIB_USER'))
+BOSS_HOST = os.getenv('BOSS_HOST')
+EMULAB_USER = os.getenv('EMULAB_USER')
+SCP_CMD = 'scp -i ~/.ssh/id_rsa'
+SSH_CMD = 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no {}@{}'.format(EMULAB_USER, BOSS_HOST)
+usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()), EMULAB_USER)
+logger = logging.getLogger(__name__)
 
 
 def send_request(emulab_cmd):
@@ -28,26 +29,36 @@ def send_request(emulab_cmd):
         :param emulab_cmd: string type
         :rtype: emulab stdout, string type
     """
-    print(emulab_cmd)
-    emulab_cmd_args = shlex.split(emulab_cmd)
+
+    logger.info(emulab_cmd)
     try:
-        emulab_stdout = subprocess.check_output(emulab_cmd_args, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(emulab_cmd, shell=True,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = proc.communicate()
+        logger.debug(stdout)
+        logger.debug(stderr)
+        logger.debug(proc.returncode)
     except subprocess.CalledProcessError as err:
-        print(err.output)
-        if b'Profile does not exist' in err.output:
+        proc.returncode = 1
+        stderr = err.output
+
+    if proc.returncode == 1:
+        logger.warning(stderr)
+        if b'Profile does not exist' in stderr:
             abort(404, description="Profile does not exist")
-        elif b'unknown user' in err.output:
+        elif b'unknown user' in stderr:
             abort(404, description="Unknown user")
-        elif b'No such project' in err.output:
+        elif b'No such project' in stderr:
             abort(404, description="No such project")
-        elif b'No such instance' in err.output:
+        elif b'No such instance' in stderr:
             abort(404, description="No such instance")
-        elif b'Search Failed' in err.output:
+        elif b'Search Failed' in stderr:
             abort(404, description="Search Failed")
         else:
-            abort(500, description=err.output.decode("utf-8"))
-    print(emulab_stdout)
-    return emulab_stdout
+            abort(500, description=stderr.decode("utf-8"))
+
+    logger.info(stdout)
+    return stdout
 
 
 def parse_response(emulab_output):
@@ -57,7 +68,7 @@ def parse_response(emulab_output):
         :param emulab_output: string type
         :rtype: json_string
     """
-    print(emulab_output)
+    logger.info(emulab_output)
     fp = tempfile.NamedTemporaryFile(delete=False)
     fp.write(emulab_output)
     fp.close()
@@ -66,11 +77,11 @@ def parse_response(emulab_output):
                                               stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as err:
         os.unlink(fp.name)
-        print(err.output)
+        logger.warning(err.output)
         return err.output
 
     os.unlink(fp.name)
-    print(json_string)
+    logger.info(json_string)
     return json_string
 
 
@@ -96,10 +107,10 @@ def create_profile_xml(profile_pid, profile_name, script, profile_listed='1', pr
     """
     fp_script = tempfile.NamedTemporaryFile(delete=False)
     fp_script.write(script.encode())
-    print(script.encode())
+    logger.debug(script.encode())
     fp_script.close()
     rspec = subprocess.check_output(["python3", fp_script.name])
-    print(rspec.decode('utf-8'))
+    logger.debug(rspec.decode('utf-8'))
     os.unlink(fp_script.name)
 
     # prepare XML
@@ -136,7 +147,7 @@ def create_profile_xml(profile_pid, profile_name, script, profile_listed='1', pr
     profile_public_value.text = profile_public
 
     xmldata = ET.tostring(profile)
-    print(xmldata)
+    logger.debug(xmldata)
 
     xmltmpfile = tempfile.NamedTemporaryFile(delete=False)
     xmltmpfile.write(xmldata)
@@ -154,14 +165,14 @@ def send_file(filepath):
         :param filepath: string type
         :rtype: xml path in boss
     """
-    print(filepath)
-    scp_args = shlex.split('{} {} {}:/tmp/'.format(SCP_CMD, filepath, ADMIN_BOSS))
+    logger.info('filepath = {}'.format(filepath))
+    scp_args = shlex.split('{} {} {}@{}:/tmp/'.format(SCP_CMD, filepath, EMULAB_USER, BOSS_HOST))
     # ssh_args = shlex.split('{} chmod 644 /tmp/{}'.format(SSH_CMD, os.path.basename(filepath)))
     try:
         subprocess.check_output(scp_args, stderr=subprocess.STDOUT)
         # subprocess.check_output(ssh_args, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as err:
-        print(err.output)
+        logger.warning(err.output)
         abort(500, description=err.output.decode("utf-8"))
     return '/tmp/{}'.format(os.path.basename(filepath))
 
@@ -169,11 +180,11 @@ def send_file(filepath):
 def maybe_renew_genicred():
     if os.path.exists(usercred_file):
         elapsed = time.time() - maybe_renew_genicred.timestamp
-        print('last renew time : {}'.format(
+        logger.info('last renew time of cred xml: {}'.format(
             time.asctime(time.localtime(maybe_renew_genicred.timestamp))))
         if elapsed > 24 * 60 * 55:  # the credential will expire in one day
             os.remove(usercred_file)
-            print('Removed old cert file ' + usercred_file)
+            logger.warning('Removed old cert file ' + usercred_file)
             maybe_renew_genicred.timestamp = time.time()
 
 

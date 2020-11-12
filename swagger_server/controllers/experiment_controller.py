@@ -7,6 +7,9 @@ from swagger_server.models.experiment import Experiment  # noqa: E501
 from swagger_server import util
 from . import emulab
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def create_experiment(body):  # noqa: E501
@@ -25,12 +28,11 @@ def create_experiment(body):  # noqa: E501
     urn = req.cluster
     if 'urn' not in urn:
         urn = os.getenv('URN_' + req.cluster)
-    print(urn)
+    logger.info('urn = {}'.format(urn))
 
     emulab_cmd = '{} sudo -u {} start-experiment -a {} -w --name {} --project {} {}'.format(
         emulab.SSH_CMD, req.username, urn, req.name, req.project, req.profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
-    print(emulab_stdout)
     return ApiResponse(code=0, output="Please use getExperiment to check whether success or fail")
 
 
@@ -52,7 +54,6 @@ def delete_experiment(username, project, experiment):  # noqa: E501
     emulab_cmd = '{} sudo -u {} manage_instance terminate {},{}'.format(
         emulab.SSH_CMD, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
-    print(emulab_stdout)
     return 'OK'
 
 
@@ -67,16 +68,16 @@ def get_experiments(username):  # noqa: E501
     :rtype: List[Experiment]
     """
 
-    emulab_cmd = '{} python ~/aerpaw/querydb.py {} list_experiments'.format(emulab.SSH_CMD, username)
+    emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_experiments'.format(emulab.SSH_CMD, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     experiments = []
     if emulab_stdout:
         results = json.loads(emulab_stdout)
-        print(results)
+        logger.info(results)
         for record in results:
             for k in list(record):
                 if not getattr(Experiment, k, None):
-                    print(k + ":" + str(record[k]) + " is ignored")
+                    logger.info(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
             experiment = Experiment(**record)
             experiments.append(experiment)
@@ -105,6 +106,6 @@ def query_experiment(username, project, experiment):  # noqa: E501
     results = dict(item.split(': ') for item in emulab_stdout.decode('utf-8').split('\n', 2))
     experiment = Experiment(name=experiment, project=project,
                             status=results['Status'], uuid=results['UUID'])
-    print(results)
+    logger.info(results)
     return experiment
 
