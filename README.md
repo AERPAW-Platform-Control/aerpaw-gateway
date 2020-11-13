@@ -10,37 +10,6 @@ This example uses the [Connexion](https://github.com/zalando/connexion) library 
 ## Requirements
 Python 3.5.2+
 
-## Usage
-To run the server, please execute the following from the root directory:
-
-```
-pip3 install -r requirements.txt
-pip3 install werkzeug==0.16.1
-cd geni-lib
-python3 setup.py install
-cd ..
-# cp perl/* <somewhere> and make sure .env points to here
-source .env
-python3 -m swagger_server
-```
-
-and open your browser to here:
-
-```
-http://localhost:8080/aerpawgateway/1.0.0/ui/
-```
-
-Your Swagger definition lives here:
-
-```
-http://localhost:8080/aerpawgateway/1.0.0/swagger.json
-```
-
-To launch the integration tests, use tox:
-```
-sudo pip install tox
-tox
-```
 
 ## Running with Docker
 
@@ -55,6 +24,45 @@ docker run --rm -it \
     --env-file .env \
     -p 127.0.0.1:8080:8080 \
     -v ~/.ssh/id_emulab_rsa:/root/.ssh/id_rsa:ro \
+    -v /var/log/:/var/log/ \
     -v ~/.bssw/geni-docker:/root/.bssw/geni/ \
+    -d \
     swagger_server
+
+```
+
+and open your browser to here:
+
+```
+http://localhost:8080/aerpawgateway/1.0.0/ui/
+```
+
+Your Swagger definition lives here:
+
+```
+http://localhost:8080/aerpawgateway/1.0.0/swagger.json
+```
+
+logging file:
+/var/log/aerpaw-gateway.log
+
+
+## Usage without docker
+To run the server, please execute the following from the root directory:
+
+```
+pip3 install -r requirements.txt
+pip3 install werkzeug==0.16.1
+cd geni-lib
+python3 setup.py install
+cd ..
+# cp perl/* <somewhere> and make sure .env points to here
+source .env
+python3 -m swagger_server
+```
+
+To launch the integration tests, use tox:
+```
+sudo pip install tox
+tox
 ```
