@@ -57,5 +57,4 @@ docker run --rm -it \
     -v ~/.ssh/id_emulab_rsa:/root/.ssh/id_rsa:ro \
     -v ~/.bssw/geni-docker:/root/.bssw/geni/ \
     swagger_server
-
 ```

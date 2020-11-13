@@ -9,8 +9,16 @@ import logging
 
 
 def main():
-    logging.basicConfig(format='%(asctime)s[%(levelname)s] %(name)s - %(message)s',
-                        level=logging.INFO)
+    if os.getenv('LOGFILE') is None:
+        logging.basicConfig(
+            format='%(asctime)s[%(levelname)s] %(filename)s:%(lineno)d - %(message)s',
+            level=logging.INFO)
+    else:
+        logging.basicConfig(
+            format='%(asctime)s[%(levelname)s] %(filename)s:%(lineno)d - %(message)s',
+            level=logging.INFO,
+            filename=os.getenv('LOGFILE'))
+
     logging.info('check {} when startup'.format(emulab.usercred_file))
     if os.path.exists(emulab.usercred_file):
         os.remove(emulab.usercred_file)

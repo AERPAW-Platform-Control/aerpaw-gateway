@@ -1,7 +1,7 @@
 import connexion
 import six
 import os
-
+from flask import abort
 from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.experiment import Experiment  # noqa: E501
 from swagger_server import util
@@ -103,9 +103,13 @@ def query_experiment(username, project, experiment):  # noqa: E501
         emulab.SSH_CMD, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
     # example of output: b'Status: ready\nUUID: dc6df64d-0ef9-11eb-9b1f-6cae8b3bf14a\nwbstore: dd41e11e-0ef9-11eb-9b1f-6cae8b3bf14a\n'
+    if len(emulab_stdout) == 0 or emulab_stdout.decode('utf-8').find('Status') < 0:
+        abort(404, description="No such instance")
+
     results = dict(item.split(': ') for item in emulab_stdout.decode('utf-8').split('\n', 2))
     experiment = Experiment(name=experiment, project=project,
                             status=results['Status'], uuid=results['UUID'])
     logger.info(results)
     return experiment
+
 

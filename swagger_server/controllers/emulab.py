@@ -35,14 +35,14 @@ def send_request(emulab_cmd):
         proc = subprocess.Popen(emulab_cmd, shell=True,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = proc.communicate()
-        logger.debug(stdout)
-        logger.debug(stderr)
-        logger.debug(proc.returncode)
+        logger.info(stdout)
+        logger.info(stderr)
+        logger.info('return code = {}'.format(proc.returncode))
     except subprocess.CalledProcessError as err:
         proc.returncode = 1
         stderr = err.output
 
-    if proc.returncode == 1:
+    if proc.returncode is not 0:
         logger.warning(stderr)
         if b'Profile does not exist' in stderr:
             abort(404, description="Profile does not exist")
@@ -54,10 +54,11 @@ def send_request(emulab_cmd):
             abort(404, description="No such instance")
         elif b'Search Failed' in stderr:
             abort(404, description="Search Failed")
+        elif b'Experiment name already in use' in stderr:
+            abort(400, description="Experiment name already in use")
         else:
             abort(500, description=stderr.decode("utf-8"))
 
-    logger.info(stdout)
     return stdout
 
 

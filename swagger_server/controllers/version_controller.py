@@ -12,4 +12,4 @@ def get_version():  # noqa: E501
 
     :rtype: str
     """
-    return '0.0.1'
+    return '1.0.0'
