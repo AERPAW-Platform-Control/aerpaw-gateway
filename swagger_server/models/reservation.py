@@ -98,8 +98,6 @@ class Reservation(Model):
         :param username: The username of this Reservation.
         :type username: str
         """
-        if username is None:
-            raise ValueError("Invalid value for `username`, must not be `None`")  # noqa: E501
 
         self._username = username
 
@@ -121,8 +119,6 @@ class Reservation(Model):
         :param project: The project of this Reservation.
         :type project: str
         """
-        if project is None:
-            raise ValueError("Invalid value for `project`, must not be `None`")  # noqa: E501
 
         self._project = project
 

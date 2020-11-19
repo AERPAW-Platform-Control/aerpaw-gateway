@@ -93,8 +93,6 @@ class Profile(Model):
         :param creator: The creator of this Profile.
         :type creator: str
         """
-        if creator is None:
-            raise ValueError("Invalid value for `creator`, must not be `None`")  # noqa: E501
 
         self._creator = creator
 
@@ -139,8 +137,6 @@ class Profile(Model):
         :param project: The project of this Profile.
         :type project: str
         """
-        if project is None:
-            raise ValueError("Invalid value for `project`, must not be `None`")  # noqa: E501
 
         self._project = project
 

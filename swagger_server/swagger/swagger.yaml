@@ -260,7 +260,7 @@ paths:
       - name: username
         in: query
         description: username for the request
-        required: true
+        required: false
         style: form
         explode: true
         schema:
@@ -565,10 +565,8 @@ components:
       - end
       - experiment
       - nodes
-      - project
       - start
       - type
-      - username
       type: object
       properties:
         username:
@@ -627,9 +625,7 @@ components:
         value: value
     Profile:
       required:
-      - creator
       - name
-      - project
       - script
       type: object
       properties:

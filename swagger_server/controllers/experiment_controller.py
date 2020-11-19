@@ -66,7 +66,7 @@ def delete_experiment(experiment, username=None, project=None):  # noqa: E501
     return 'OK'
 
 
-def get_experiments(username):  # noqa: E501
+def get_experiments(username=None):  # noqa: E501
     """get experiment(s) under user
 
     get experiment(s) under user # noqa: E501
