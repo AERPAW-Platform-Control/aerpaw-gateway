@@ -24,7 +24,7 @@ try:
                                          unix_socket='/tmp/mysql.sock')
     cursor = connection.cursor()
     if op == "list_experiments":
-        list_experiment_query = 'select uuid, name, pid, profile_id, profile_version, aggregate_urn, started from apt_instances where creator = "{}";'.format(
+        list_experiment_query = 'select uuid, name, pid, profile_id, profile_version, aggregate_urn, started, status from apt_instances where creator = "{}";'.format(
             username)
         cursor.execute(list_experiment_query)
         records = cursor.fetchall()
@@ -45,7 +45,8 @@ try:
                       'profile': profile_string,  # profile_proj, profile_name
                       'profile_version': row[4],  # profile_version
                       'cluster': row[5],    # aggregate_urn
-                      'start': row[6]}      # started (datetime)
+                      'start': row[6],      # started (datetime)
+                      'status': row[7]}     # status
 
             experiments.append(dict_r)
         print(json.dumps(experiments, cls=DateTimeEncoder))
