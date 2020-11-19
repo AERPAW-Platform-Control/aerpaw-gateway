@@ -30,6 +30,11 @@ def create_experiment(body):  # noqa: E501
         urn = os.getenv('URN_' + req.cluster)
     logger.info('urn = {}'.format(urn))
 
+    if req.username is None:
+        req.username = emulab.EMULAB_USER
+    if req.project is None:
+        req.project = emulab.EMULAB_PROJ
+
     emulab_cmd = '{} sudo -u {} start-experiment -a {} -w --name {} --project {} {}'.format(
         emulab.SSH_CMD, req.username, urn, req.name, req.project, req.profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
@@ -51,6 +56,11 @@ def delete_experiment(username, project, experiment):  # noqa: E501
 
     :rtype: None
     """
+    if username is None:
+        username = emulab.EMULAB_USER
+    if project is None:
+        project = emulab.EMULAB_PROJ
+
     emulab_cmd = '{} sudo -u {} manage_instance terminate {},{}'.format(
         emulab.SSH_CMD, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
@@ -67,6 +77,9 @@ def get_experiments(username):  # noqa: E501
 
     :rtype: List[Experiment]
     """
+
+    if username is None:
+        username = emulab.EMULAB_USER
 
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_experiments'.format(emulab.SSH_CMD, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
@@ -99,6 +112,12 @@ def query_experiment(username, project, experiment):  # noqa: E501
 
     :rtype: List[Experiment]
     """
+
+    if username is None:
+        username = emulab.EMULAB_USER
+    if project is None:
+        project = emulab.EMULAB_PROJ
+
     emulab_cmd = '{} sudo -u {} manage_instance status {},{}'.format(
         emulab.SSH_CMD, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)

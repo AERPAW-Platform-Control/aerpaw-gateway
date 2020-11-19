@@ -16,6 +16,7 @@ import logging
 PARSE_PL_FILE = os.getenv('PARSE_PL_FILE')
 BOSS_HOST = os.getenv('BOSS_HOST')
 EMULAB_USER = os.getenv('EMULAB_USER')
+EMULAB_PROJ = os.getenv('EMULAB_PROJ')
 SCP_CMD = 'scp -i ~/.ssh/id_rsa'
 SSH_CMD = 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no {}@{}'.format(EMULAB_USER, BOSS_HOST)
 usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()), EMULAB_USER)

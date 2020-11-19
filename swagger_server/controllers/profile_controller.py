@@ -24,6 +24,12 @@ def create_profile(body):  # noqa: E501
     """
     if connexion.request.is_json:
         req = Profile.from_dict(connexion.request.get_json())  # noqa: E501
+
+    if req.creator is None:
+        req.creator = emulab.EMULAB_USER
+    if req.project is None:
+        req.project = emulab.EMULAB_PROJ
+
     xmlfile = emulab.create_profile_xml(req.project, req.name, req.script)
     xmlpath = emulab.send_file(xmlfile)
 
@@ -55,6 +61,12 @@ def delete_profile(username, project, name):  # noqa: E501
 
     :rtype: None
     """
+
+    if username is None:
+        username = emulab.EMULAB_USER
+    if project is None:
+        project = emulab.EMULAB_PROJ
+
     emulab_cmd = '{} sudo -u {} manage_profile delete {},{}'.format(
         emulab.SSH_CMD, username, project, name)
     emulab.send_request(emulab_cmd)
@@ -73,6 +85,9 @@ def get_profile(username):  # noqa: E501
 
     :rtype: List[Profile]
     """
+    if username is None:
+        username = emulab.EMULAB_USER
+
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_profiles'.format(emulab.SSH_CMD, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     profiles = []

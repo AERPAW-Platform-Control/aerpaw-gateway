@@ -40,6 +40,7 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
             ad = geni.aggregate.cloudlab.Renci.listresources(context, urn)
             vnodes = emulab.parse_manifest(ad)
             resources = Resource(rspec=ad.text, vnodes=vnodes)
+            logger.info(resources)
         else:
             logger.info('list resources')
             ad = geni.aggregate.cloudlab.Renci.listresources(context)

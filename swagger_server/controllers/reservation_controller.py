@@ -31,6 +31,8 @@ def create_reservation(body, validate=None):  # noqa: E501
     if validate:
         check_option = '-n'
 
+    if reservation.username is None:
+        reservation.username = emulab.EMULAB_USER
 
     emulab_cmd = \
         '{} sudo -u {} manage_reservations reserve {} -N /tmp/testreason -t {} -p emulab -s {} -e {} {} {}'.format(
@@ -66,6 +68,9 @@ def delete_reservation(username, project, reservation, cluster=None):  # noqa: E
 
         :rtype: List[ApiResponse]
         """
+    if username is None:
+        username = emulab.EMULAB_USER
+
     emulab_cmd = '{} sudo -u {} manage_reservations delete {} {}'.format(
         emulab.SSH_CMD, username, project, reservation)
 
@@ -87,6 +92,9 @@ def get_reservation(username, cluster=None):  # noqa: E501
 
     :rtype: List[Reservation]
     """
+    if username is None:
+        username = emulab.EMULAB_USER
+
     emulab_cmd = '{} sudo -u {} manage_reservations list'.format(emulab.SSH_CMD, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     json_string = emulab.parse_response(emulab_stdout)
