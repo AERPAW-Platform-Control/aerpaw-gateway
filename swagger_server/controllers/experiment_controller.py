@@ -41,18 +41,17 @@ def create_experiment(body):  # noqa: E501
     return ApiResponse(code=0, output="Please use getExperiment to check whether success or fail")
 
 
-def delete_experiment(username, project, experiment):  # noqa: E501
+def delete_experiment(experiment, username=None, project=None):  # noqa: E501
     """delete experiment
 
     delete/terminate experiment # noqa: E501
 
+    :param experiment: experiment to delete
+    :type experiment: str
     :param username: username for the request
     :type username: str
     :param project: project name
     :type project: str
-    :param experiment: experiment to delete
-    :type experiment: int
-    :type experiment: str
 
     :rtype: None
     """
@@ -98,17 +97,17 @@ def get_experiments(username):  # noqa: E501
     return experiments
 
 
-def query_experiment(username, project, experiment):  # noqa: E501
+def query_experiment(experiment, username=None, project=None):  # noqa: E501
     """get status of specific experiment
 
     get Experiment status of specific experiment # noqa: E501
 
+    :param experiment: experiment name to query
+    :type experiment: str
     :param username: username for the request
     :type username: str
     :param project: project name
     :type project: str
-    :param experiment: experiment name to query
-    :type experiment: str
 
     :rtype: List[Experiment]
     """

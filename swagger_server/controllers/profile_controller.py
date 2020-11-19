@@ -47,17 +47,17 @@ def create_profile(body):  # noqa: E501
     return response
 
 
-def delete_profile(username, project, name):  # noqa: E501
+def delete_profile(name, username=None, project=None):  # noqa: E501
     """delete profile
 
     delete profile # noqa: E501
 
+    :param name: name of profile to delete
+    :type name: str
     :param username: username for the request
     :type username: str
     :param project: project name
     :type project: str
-    :param name: name of profile to delete
-    :type name: str
 
     :rtype: None
     """
@@ -75,7 +75,7 @@ def delete_profile(username, project, name):  # noqa: E501
     return response
 
 
-def get_profile(username):  # noqa: E501
+def get_profile(username=None):  # noqa: E501
     """get profiles under user
 
     get profiles under user # noqa: E501

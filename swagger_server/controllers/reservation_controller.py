@@ -52,17 +52,17 @@ def create_reservation(body, validate=None):  # noqa: E501
     return response
 
 
-def delete_reservation(username, project, reservation, cluster=None):  # noqa: E501
+def delete_reservation(project, reservation, username=None, cluster=None):  # noqa: E501
     """delete reservation
 
         Delete Reservation # noqa: E501
 
-        :param username: username who request to delete
-        :type username: str
         :param project: The project name
         :type project: str
         :param reservation: reservation uuid to delete
         :type reservation: str
+        :param username: username who request to delete
+        :type username: str
         :param cluster: either cluster name or cluster_urn
         :type cluster: str
 
@@ -80,7 +80,7 @@ def delete_reservation(username, project, reservation, cluster=None):  # noqa: E
     return response
 
 
-def get_reservation(username, cluster=None):  # noqa: E501
+def get_reservation(username=None, cluster=None):  # noqa: E501
     """get reservation under user
 
     get reservation under user # noqa: E501

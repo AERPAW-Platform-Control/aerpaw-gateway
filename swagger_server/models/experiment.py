@@ -142,8 +142,6 @@ class Experiment(Model):
         :param project: The project of this Experiment.
         :type project: str
         """
-        if project is None:
-            raise ValueError("Invalid value for `project`, must not be `None`")  # noqa: E501
 
         self._project = project
 
