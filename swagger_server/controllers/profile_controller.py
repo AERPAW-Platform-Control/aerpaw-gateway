@@ -20,7 +20,7 @@ def create_profile(body):  # noqa: E501
     :param body: Profile Object
     :type body: dict | bytes
 
-    :rtype: List[ApiResponse]
+    :rtype: ApiResponse
     """
     if connexion.request.is_json:
         req = Profile.from_dict(connexion.request.get_json())  # noqa: E501
@@ -119,7 +119,7 @@ def query_profile(profile, username=None, project=None):  # noqa: E501
     :param project: project name
     :type project: str
 
-    :rtype: List[Profile]
+    :rtype: Profile
     """
     if username is None:
         username = emulab.EMULAB_USER

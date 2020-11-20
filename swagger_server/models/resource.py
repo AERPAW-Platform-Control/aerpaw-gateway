@@ -16,19 +16,19 @@ class Resource(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, nodes: Node=None, vnodes: Vnode=None, rspec: str=None):  # noqa: E501
+    def __init__(self, nodes: List[Node]=None, vnodes: List[Vnode]=None, rspec: str=None):  # noqa: E501
         """Resource - a model defined in Swagger
 
         :param nodes: The nodes of this Resource.  # noqa: E501
-        :type nodes: Node
+        :type nodes: List[Node]
         :param vnodes: The vnodes of this Resource.  # noqa: E501
-        :type vnodes: Vnode
+        :type vnodes: List[Vnode]
         :param rspec: The rspec of this Resource.  # noqa: E501
         :type rspec: str
         """
         self.swagger_types = {
-            'nodes': Node,
-            'vnodes': Vnode,
+            'nodes': List[Node],
+            'vnodes': List[Vnode],
             'rspec': str
         }
 
@@ -53,43 +53,43 @@ class Resource(Model):
         return util.deserialize_model(dikt, cls)
 
     @property
-    def nodes(self) -> Node:
+    def nodes(self) -> List[Node]:
         """Gets the nodes of this Resource.
 
 
         :return: The nodes of this Resource.
-        :rtype: Node
+        :rtype: List[Node]
         """
         return self._nodes
 
     @nodes.setter
-    def nodes(self, nodes: Node):
+    def nodes(self, nodes: List[Node]):
         """Sets the nodes of this Resource.
 
 
         :param nodes: The nodes of this Resource.
-        :type nodes: Node
+        :type nodes: List[Node]
         """
 
         self._nodes = nodes
 
     @property
-    def vnodes(self) -> Vnode:
+    def vnodes(self) -> List[Vnode]:
         """Gets the vnodes of this Resource.
 
 
         :return: The vnodes of this Resource.
-        :rtype: Vnode
+        :rtype: List[Vnode]
         """
         return self._vnodes
 
     @vnodes.setter
-    def vnodes(self, vnodes: Vnode):
+    def vnodes(self, vnodes: List[Vnode]):
         """Sets the vnodes of this Resource.
 
 
         :param vnodes: The vnodes of this Resource.
-        :type vnodes: Vnode
+        :type vnodes: List[Vnode]
         """
 
         self._vnodes = vnodes

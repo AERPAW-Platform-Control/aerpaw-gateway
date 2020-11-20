@@ -20,7 +20,7 @@ def create_experiment(body):  # noqa: E501
     :param body: Experiment Object
     :type body: dict | bytes
 
-    :rtype: List[ApiResponse]
+    :rtype: ApiResponse
     """
     if connexion.request.is_json:
         req = Experiment.from_dict(connexion.request.get_json())  # noqa: E501
@@ -109,7 +109,7 @@ def query_experiment(experiment, username=None, project=None):  # noqa: E501
     :param project: project name
     :type project: str
 
-    :rtype: List[Experiment]
+    :rtype: Experiment
     """
 
     if username is None:

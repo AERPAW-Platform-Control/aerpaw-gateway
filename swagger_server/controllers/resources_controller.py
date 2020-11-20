@@ -26,7 +26,7 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
     :param experiment: if experiment id is given, manifest rspec of the experiment will be returned.
     :type experiment: str
 
-    :rtype: List[Resource]
+    :rtype: Resource
     """
     context = geni.util.loadContext(key_passphrase=os.getenv('EMULAB_PASSWORD'))
     logger.debug(context.cf.key)
