@@ -130,7 +130,7 @@ def query_profile(profile, username=None, project=None):  # noqa: E501
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} query_profile {} {}'.format(
         emulab.SSH_CMD, username, project, profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
-    profiles = []
+    found_profile = None
     if emulab_stdout:
         results = json.loads(emulab_stdout)
         logger.info(results)
@@ -140,5 +140,4 @@ def query_profile(profile, username=None, project=None):  # noqa: E501
                     logger.info(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
             found_profile = Profile(**record)
-            profiles.append(found_profile)
-    return profiles
+    return found_profile
