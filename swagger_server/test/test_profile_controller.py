@@ -56,6 +56,21 @@ class TestProfileController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
+    def test_query_profile(self):
+        """Test case for query_profile
+
+        query specific profile
+        """
+        query_string = [('username', 'username_example'),
+                        ('project', 'project_example'),
+                        ('profile', 'profile_example')]
+        response = self.client.open(
+            '/aerpawgateway/1.0.0/profile',
+            method='GET',
+            query_string=query_string)
+        self.assert200(response,
+                       'Response body is : ' + response.data.decode('utf-8'))
+
 
 if __name__ == '__main__':
     import unittest

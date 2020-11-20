@@ -429,7 +429,7 @@ paths:
       parameters:
       - name: username
         in: query
-        description: username for the request
+        description: creator of the profile
         required: false
         style: form
         explode: true
@@ -449,6 +449,50 @@ paths:
           description: Unknown User
       x-openapi-router-controller: swagger_server.controllers.profile_controller
   /profile:
+    get:
+      tags:
+      - profile
+      summary: query specific profile
+      description: query specific profile
+      operationId: query_profile
+      parameters:
+      - name: username
+        in: query
+        description: creator of the profile
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: project
+        in: query
+        description: project name
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: profile
+        in: query
+        description: profile name to query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Profile'
+                x-content-type: application/json
+        "400":
+          description: Unknown User
+      x-openapi-router-controller: swagger_server.controllers.profile_controller
     post:
       tags:
       - profile

@@ -80,7 +80,24 @@ def get_profiles(username=None):  # noqa: E501
 
     get profiles under user # noqa: E501
 
-    :param username: username for the request
+    :param username: creator of the profile
+    :type username: str
+
+    :rtype: List[Profile]
+    """
+    return 'do some magic!'
+
+
+def query_profile(project, profile, username=None):  # noqa: E501
+    """query specific profile
+
+    query specific profile # noqa: E501
+
+    :param project: project name
+    :type project: str
+    :param profile: profile name to query
+    :type profile: str
+    :param username: creator of the profile
     :type username: str
 
     :rtype: List[Profile]
