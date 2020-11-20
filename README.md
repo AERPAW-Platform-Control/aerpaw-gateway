@@ -13,6 +13,8 @@ Python 3.5.2+
 
 ## Running with Docker
 
+The certificate of the emulab user must be downloaded first and put under local directory such as .bssw similar to geni-lib documentation.
+
 To run the server on a Docker container, please execute the following from the root directory:
 
 ```bash
@@ -22,10 +24,11 @@ docker build -t swagger_server .
 # starting up a container
 docker run --rm -it \
     --env-file .env \
-    -p 127.0.0.1:8080:8080 \
-    -v ~/.ssh/id_emulab_rsa:/root/.ssh/id_rsa:ro \
+    -p 127.0.0.1:8888:8080 \
     -v /var/log/:/var/log/ \
-    -v ~/.bssw/geni-docker:/root/.bssw/geni/ \
+    -v ~/.bssw/ssh/id_emulab_rsa:/root/.ssh/id_rsa:ro \
+    -v ~/.bssw/ssh/config:/root/.ssh/config:ro \
+    -v ~/.bssw/geni-emulab:/root/.bssw/geni/ \
     -d \
     swagger_server
 
