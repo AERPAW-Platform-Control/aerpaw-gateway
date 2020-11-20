@@ -85,7 +85,26 @@ def get_profiles(username=None):  # noqa: E501
 
     :rtype: List[Profile]
     """
-    return 'do some magic!'
+    if username is None:
+        username = emulab.EMULAB_USER
+        logger.info('user default user!')
+
+    emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_profiles'.format(
+                    emulab.SSH_CMD, username)
+    emulab_stdout = emulab.send_request(emulab_cmd)
+    profiles = []
+    if emulab_stdout:
+        results = json.loads(emulab_stdout)
+        logger.info(results)
+        for record in results:
+            for k in list(record):
+                if not getattr(Profile, k, None):
+                    logger.info(k + ":" + str(record[k]) + " is ignored")
+                    del record[k]
+            profile = Profile(**record)
+            profiles.append(profile)
+
+    return profiles
 
 
 def query_profile(project, profile, username=None):  # noqa: E501
@@ -104,10 +123,12 @@ def query_profile(project, profile, username=None):  # noqa: E501
     """
     if username is None:
         username = emulab.EMULAB_USER
+        logger.info('user default user!')
 
-    emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_profiles'.format(emulab.SSH_CMD, username)
+    emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} query_profile {} {}'.format(
+        emulab.SSH_CMD, username, project, profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
-    profiles = []
+    profile = None
     if emulab_stdout:
         results = json.loads(emulab_stdout)
         logger.info(results)
@@ -117,6 +138,4 @@ def query_profile(project, profile, username=None):  # noqa: E501
                     logger.info(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
             profile = Profile(**record)
-            profiles.append(profile)
-
-    return profiles
+    return profile
