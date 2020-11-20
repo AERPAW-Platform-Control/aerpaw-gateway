@@ -16,6 +16,13 @@ class DateTimeEncoder(JSONEncoder):
 
 username = sys.argv[1]
 op = str(sys.argv[2])
+
+project = None
+profilename = None
+if len(sys.argv) > 4:
+    project = sys.argv[3]
+    profilename = sys.argv[4]
+
 try:
     connection = mysql.connector.connect(host='localhost',
                                          database='tbdb',
@@ -54,6 +61,27 @@ try:
     elif op == "list_profiles":
         query = 'select name, pid, version, created, rspec, script, uuid from apt_profile_versions where creator="{}" and deleted IS NULL;'.format(
             username)
+        cursor.execute(query)
+        records = cursor.fetchall()
+
+        profiles = []
+        for row in records:
+            dict_r = {'creator': username,
+                      'name': row[0],     # name
+                      'project': row[1],  # pid
+                      'version': row[2],  # version
+                      'created': row[3],  # created
+                      'rspec': row[4],  # repourl
+                      'script': row[5],  # script
+                      'uuid': row[6]}  # uuid
+            profiles.append(dict_r)
+        print(json.dumps(profiles, cls=DateTimeEncoder))
+
+    elif op == "query_profile":
+        query = 'select name, pid, version, created, rspec, script, uuid from apt_profile_versions where creator="{}" and pid="{}" and name="{}" and deleted IS NULL;'.format(
+            username,
+            project,
+            profilename)
         cursor.execute(query)
         records = cursor.fetchall()
 
