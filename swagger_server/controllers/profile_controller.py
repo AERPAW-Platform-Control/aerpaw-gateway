@@ -75,7 +75,7 @@ def delete_profile(name, username=None, project=None):  # noqa: E501
     return response
 
 
-def get_profile(username=None):  # noqa: E501
+def get_profiles(username=None):  # noqa: E501
     """get profiles under user
 
     get profiles under user # noqa: E501

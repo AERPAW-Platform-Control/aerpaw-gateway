@@ -419,13 +419,13 @@ paths:
         "400":
           description: Unknown User
       x-openapi-router-controller: swagger_server.controllers.user_controller
-  /profile:
+  /profiles:
     get:
       tags:
       - profile
       summary: get profiles under user
       description: get profiles under user
-      operationId: get_profile
+      operationId: get_profiles
       parameters:
       - name: username
         in: query
@@ -448,6 +448,7 @@ paths:
         "400":
           description: Unknown User
       x-openapi-router-controller: swagger_server.controllers.profile_controller
+  /profile:
     post:
       tags:
       - profile

@@ -43,14 +43,14 @@ class TestProfileController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
-    def test_get_profile(self):
-        """Test case for get_profile
+    def test_get_profiles(self):
+        """Test case for get_profiles
 
         get profiles under user
         """
         query_string = [('username', 'erikafu')]
         response = self.client.open(
-            '/aerpawgateway/1.0.0/profile',
+            '/aerpawgateway/1.0.0/profiles',
             method='GET',
             query_string=query_string)
         self.assert200(response,
