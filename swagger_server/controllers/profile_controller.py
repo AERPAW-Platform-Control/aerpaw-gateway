@@ -107,28 +107,30 @@ def get_profiles(username=None):  # noqa: E501
     return profiles
 
 
-def query_profile(project, profile, username=None):  # noqa: E501
+def query_profile(profile, username=None, project=None):  # noqa: E501
     """query specific profile
 
     query specific profile # noqa: E501
 
-    :param project: project name
-    :type project: str
     :param profile: profile name to query
     :type profile: str
     :param username: creator of the profile
     :type username: str
+    :param project: project name
+    :type project: str
 
     :rtype: List[Profile]
     """
     if username is None:
         username = emulab.EMULAB_USER
         logger.info('user default user!')
+    if project is None:
+        project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} query_profile {} {}'.format(
         emulab.SSH_CMD, username, project, profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
-    profile = None
+    profiles = []
     if emulab_stdout:
         results = json.loads(emulab_stdout)
         logger.info(results)
@@ -137,5 +139,6 @@ def query_profile(project, profile, username=None):  # noqa: E501
                 if not getattr(Profile, k, None):
                     logger.info(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
-            profile = Profile(**record)
-    return profile
+            found_profile = Profile(**record)
+            profiles.append(found_profile)
+    return profiles

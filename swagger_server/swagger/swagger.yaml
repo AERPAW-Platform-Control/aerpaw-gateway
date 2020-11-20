@@ -467,7 +467,7 @@ paths:
       - name: project
         in: query
         description: project name
-        required: true
+        required: false
         style: form
         explode: true
         schema:

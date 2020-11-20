@@ -57,6 +57,10 @@ def send_request(emulab_cmd):
             abort(404, description="Search Failed")
         elif b'Experiment name already in use' in stderr:
             abort(400, description="Experiment name already in use")
+        elif b'profile_name: Already in use' in stdout:
+            abort(404, description="profile_name: Already in use")
+        elif len(stdout) > 0:
+            abort(500, description=stdout.decode("utf-8"))
         else:
             abort(500, description=stderr.decode("utf-8"))
 
