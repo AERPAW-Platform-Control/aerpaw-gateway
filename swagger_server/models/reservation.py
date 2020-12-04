@@ -14,7 +14,7 @@ class Reservation(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, username: str=None, project: str=None, cluster: str=None, start: str=None, end: str=None, type: str=None, nodes: int=None, experiment: str=None, uuid: str=None):  # noqa: E501
+    def __init__(self, username: str=None, project: str=None, cluster: str=None, start: str=None, end: str=None, type: str=None, nodes: int=None, experiment: str=None, uuid: str=None, using: bool=None):  # noqa: E501
         """Reservation - a model defined in Swagger
 
         :param username: The username of this Reservation.  # noqa: E501
@@ -35,6 +35,8 @@ class Reservation(Model):
         :type experiment: str
         :param uuid: The uuid of this Reservation.  # noqa: E501
         :type uuid: str
+        :param using: The using of this Reservation.  # noqa: E501
+        :type using: bool
         """
         self.swagger_types = {
             'username': str,
@@ -45,7 +47,8 @@ class Reservation(Model):
             'type': str,
             'nodes': int,
             'experiment': str,
-            'uuid': str
+            'uuid': str,
+            'using': bool
         }
 
         self.attribute_map = {
@@ -57,7 +60,8 @@ class Reservation(Model):
             'type': 'type',
             'nodes': 'nodes',
             'experiment': 'experiment',
-            'uuid': 'uuid'
+            'uuid': 'uuid',
+            'using': 'using'
         }
         self._username = username
         self._project = project
@@ -68,6 +72,7 @@ class Reservation(Model):
         self._nodes = nodes
         self._experiment = experiment
         self._uuid = uuid
+        self._using = using
 
     @classmethod
     def from_dict(cls, dikt) -> 'Reservation':
@@ -278,3 +283,24 @@ class Reservation(Model):
         """
 
         self._uuid = uuid
+
+    @property
+    def using(self) -> bool:
+        """Gets the using of this Reservation.
+
+
+        :return: The using of this Reservation.
+        :rtype: bool
+        """
+        return self._using
+
+    @using.setter
+    def using(self, using: bool):
+        """Sets the using of this Reservation.
+
+
+        :param using: The using of this Reservation.
+        :type using: bool
+        """
+
+        self._using = using

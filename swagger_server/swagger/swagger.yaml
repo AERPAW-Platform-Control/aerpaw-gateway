@@ -94,10 +94,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ApiResponse'
-                x-content-type: application/json
+                $ref: '#/components/schemas/ApiResponse'
         "400":
           description: Unknown User
         "405":
@@ -129,7 +126,7 @@ paths:
       - name: project
         in: query
         description: The project name
-        required: true
+        required: false
         style: form
         explode: true
         schema:
@@ -148,10 +145,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ApiResponse'
-                x-content-type: application/json
+                $ref: '#/components/schemas/ApiResponse'
         "400":
           description: Unknown User
         "404":
@@ -625,8 +619,11 @@ components:
           example: aerpaw001
         uuid:
           type: string
+        using:
+          type: boolean
       example:
         cluster: RENCI
+        using: true
         nodes: 1
         experiment: aerpaw001
         start: "1602566653"

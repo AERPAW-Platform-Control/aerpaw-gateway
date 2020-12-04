@@ -3,7 +3,9 @@ import six
 import json
 from . import emulab
 from datetime import datetime
-
+import subprocess
+import tempfile
+import os
 from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.reservation import Reservation  # noqa: E501
 from swagger_server import util
@@ -22,7 +24,7 @@ def create_reservation(body, validate=None):  # noqa: E501
     :param validate: set to true if just to validate instead of actual reserve
     :type validate: bool
 
-    :rtype: List[ApiResponse]
+    :rtype: ApiResponse
     """
     if connexion.request.is_json:
         reservation = Reservation.from_dict(connexion.request.get_json())  # noqa: E501
@@ -33,12 +35,23 @@ def create_reservation(body, validate=None):  # noqa: E501
 
     if reservation.username is None:
         reservation.username = emulab.EMULAB_USER
+    if reservation.project is None:
+        reservation.project = emulab.EMULAB_PROJ
+        logger.info('use default project \'{}\''.format(reservation.project))
+
+    notefile = tempfile.NamedTemporaryFile(delete=False)
+    notefile.write(reservation.experiment.encode())
+    notefile.close()
+    subprocess.check_output(['chmod', '644', notefile.name], stderr=subprocess.STDOUT)
+    filepath = emulab.send_file(notefile.name)
+    os.unlink(notefile.name)
 
     emulab_cmd = \
-        '{} sudo -u {} manage_reservations reserve {} -N /tmp/testreason -t {} -p emulab -s {} -e {} {} {}'.format(
+        '{} sudo -u {} manage_reservations reserve {} -N {} -t {} -p emulab -s {} -e {} {} {}'.format(
         emulab.SSH_CMD,
         reservation.username,
         check_option,
+        filepath,
         reservation.type,
         reservation.start,
         reservation.end,
@@ -49,27 +62,33 @@ def create_reservation(body, validate=None):  # noqa: E501
     json_string = emulab.parse_response(emulab_stdout)
     response = ApiResponse(**(json.loads(json_string)))
 
+    # delete the temporary files
+    emulab_cmd = '{} sudo rm {}'.format(emulab.SSH_CMD, filepath)
+    emulab.send_request(emulab_cmd)
+
     return response
 
 
-def delete_reservation(project, reservation, username=None, cluster=None):  # noqa: E501
+def delete_reservation(reservation, username=None, cluster=None, project=None):  # noqa: E501
     """delete reservation
 
-        Delete Reservation # noqa: E501
+    Delete Reservation # noqa: E501
 
-        :param project: The project name
-        :type project: str
-        :param reservation: reservation uuid to delete
-        :type reservation: str
-        :param username: username who request to delete
-        :type username: str
-        :param cluster: either cluster name or cluster_urn
-        :type cluster: str
+    :param reservation: reservation uuid to delete
+    :type reservation: str
+    :param username: username who request to delete
+    :type username: str
+    :param cluster: either cluster name or cluster_urn
+    :type cluster: str
+    :param project: The project name
+    :type project: str
 
-        :rtype: List[ApiResponse]
-        """
+    :rtype: ApiResponse
+    """
     if username is None:
         username = emulab.EMULAB_USER
+    if project is None:
+        project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo -u {} manage_reservations delete {} {}'.format(
         emulab.SSH_CMD, username, project, reservation)
@@ -107,6 +126,7 @@ def get_reservation(username=None, cluster=None):  # noqa: E501
             endstamp = datetime.fromisoformat(record['end'].replace("Z", "+00:00")).timestamp()
             record['start'] = str(int(startstamp))
             record['end'] = str(int(endstamp))
+            record['using'] = bool(int(record['using']))
             record['username'] = record.pop('uid')
             record['project'] = record.pop('pid')
             record['experiment'] = record.pop('notes')
