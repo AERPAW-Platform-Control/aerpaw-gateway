@@ -8,17 +8,21 @@ COPY requirements.txt /usr/src/app/
 RUN pip3 install --no-cache-dir -r requirements.txt
 RUN pip3 install --no-cache-dir connexion[swagger-ui]
 
-# add geni-lib and aerpaw stuff
+# install geni-lib
 COPY geni-lib geni-lib/
 WORKDIR /usr/src/app/geni-lib
 RUN python3 setup.py install
-WORKDIR /usr/src/app
-COPY perl perl/
 
+# install perl scripts
+WORKDIR /opt/
+COPY perl/GeniResponse.pm /opt/
+COPY perl/parseEmulabResponse.pl /opt/
+RUN cpan JSON
+
+WORKDIR /usr/src/app
 COPY . /usr/src/app
 
 EXPOSE 8080
 
 ENTRYPOINT ["python3"]
-
 CMD ["-m", "swagger_server"]
