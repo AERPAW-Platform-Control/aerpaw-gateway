@@ -28,7 +28,12 @@ def create_experiment(body):  # noqa: E501
     urn = req.cluster
     if 'urn' not in urn:
         urn = os.getenv('URN_' + req.cluster)
+    elif 'authority+cm' not in urn:
+        urn = urn + '+authority+cm'
     logger.info('urn = {}'.format(urn))
+
+    if ',' not in req.profile:
+        req.profile = emulab.EMULAB_PROJ + ',' + req.profile
 
     if req.username is None:
         req.username = emulab.EMULAB_USER
