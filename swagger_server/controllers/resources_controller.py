@@ -33,7 +33,9 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
     logger.debug(context.cf.cert)
     try:
         emulab.maybe_renew_genicred()  # renew credential every 24 hour
-        if project and experiment:
+        if experiment:
+            if project is None:
+                project = emulab.EMULAB_PROJ
             logger.info('query manifest for experiment')
             urn = 'urn:publicid:IDN+exogeni.net:{}+slice+{}'.format(project, experiment)
             logger.info('urn = {}'.format(urn))
