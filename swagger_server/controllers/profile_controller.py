@@ -1,6 +1,6 @@
 import connexion
 import six
-
+from flask import abort
 from swagger_server.models.api_response import ApiResponse  # noqa: E501
 from swagger_server.models.profile import Profile  # noqa: E501
 from swagger_server import util
@@ -123,7 +123,6 @@ def query_profile(profile, username=None, project=None):  # noqa: E501
     """
     if username is None:
         username = emulab.EMULAB_USER
-        logger.info('user default user!')
     if project is None:
         project = emulab.EMULAB_PROJ
 
@@ -140,4 +139,6 @@ def query_profile(profile, username=None, project=None):  # noqa: E501
                     logger.info(k + ":" + str(record[k]) + " is ignored")
                     del record[k]
             found_profile = Profile(**record)
+    if found_profile is None:
+        abort(404, description="No such profile")
     return found_profile
