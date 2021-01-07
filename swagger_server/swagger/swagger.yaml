@@ -326,82 +326,35 @@ paths:
           description: Experiment not found
       x-openapi-router-controller: swagger_server.controllers.experiment_controller
   /user:
-    get:
+    post:
       tags:
       - user
-      summary: get user information
-      description: get user information
-      operationId: get_user
+      summary: add/update user and sshkey on experiment nodes
+      operationId: adduser
       parameters:
-      - name: username
+      - name: experiment
         in: query
-        description: username for the request
+        description: experiment for the request
         required: true
         style: form
         explode: true
         schema:
           type: string
-      responses:
-        "200":
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Experiment'
-                x-content-type: application/json
-        "400":
-          description: Unknown User
-      x-openapi-router-controller: swagger_server.controllers.user_controller
-    post:
-      tags:
-      - user
-      summary: create user on emulab testbed
-      operationId: create_user
-      parameters:
-      - name: username
+      - name: project
         in: query
-        description: username for the request
-        required: true
+        description: project of the experiment
+        required: false
         style: form
         explode: true
         schema:
           type: string
       requestBody:
-        $ref: '#/components/requestBodies/User'
+        $ref: '#/components/requestBodies/Userkey'
       responses:
         "200":
           description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ApiResponse'
-                x-content-type: application/json
         "400":
-          description: User exists
-        "405":
-          description: Invalid input
-      x-openapi-router-controller: swagger_server.controllers.user_controller
-    delete:
-      tags:
-      - user
-      summary: delete user
-      operationId: delete_user
-      parameters:
-      - name: username
-        in: query
-        description: username for the request
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      responses:
-        "400":
-          description: Unknown User
+          description: Bad request
       x-openapi-router-controller: swagger_server.controllers.user_controller
   /profiles:
     get:
@@ -535,14 +488,16 @@ paths:
       x-openapi-router-controller: swagger_server.controllers.profile_controller
 components:
   schemas:
-    User:
+    Userkey:
       required:
-      - username
+      - user
       type: object
       properties:
-        username:
+        user:
           type: string
           example: erika
+        pubkey:
+          type: string
     Experiment:
       required:
       - name
@@ -839,12 +794,12 @@ components:
           schema:
             $ref: '#/components/schemas/Experiment'
       required: true
-    User:
+    Userkey:
       description: User Object
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/User'
+            $ref: '#/components/schemas/Userkey'
       required: true
     Profile:
       description: Profile Object
