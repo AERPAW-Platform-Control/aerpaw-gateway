@@ -48,7 +48,7 @@ def create_reservation(body, validate=None):  # noqa: E501
 
     emulab_cmd = \
         '{} sudo -u {} manage_reservations reserve {} -N {} -t {} -p emulab -s {} -e {} {} {}'.format(
-        emulab.SSH_CMD,
+        emulab.SSH_BOSS,
         reservation.username,
         check_option,
         filepath,
@@ -63,7 +63,7 @@ def create_reservation(body, validate=None):  # noqa: E501
     response = ApiResponse(**(json.loads(json_string)))
 
     # delete the temporary files
-    emulab_cmd = '{} sudo rm {}'.format(emulab.SSH_CMD, filepath)
+    emulab_cmd = '{} sudo rm {}'.format(emulab.SSH_BOSS, filepath)
     emulab.send_request(emulab_cmd)
 
     return response
@@ -91,7 +91,7 @@ def delete_reservation(reservation, username=None, cluster=None, project=None): 
         project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo -u {} manage_reservations delete {} {}'.format(
-        emulab.SSH_CMD, username, project, reservation)
+        emulab.SSH_BOSS, username, project, reservation)
 
     emulab_stdout = emulab.send_request(emulab_cmd)
     json_string = emulab.parse_response(emulab_stdout)
@@ -114,7 +114,7 @@ def get_reservation(username=None, cluster=None):  # noqa: E501
     if username is None:
         username = emulab.EMULAB_USER
 
-    emulab_cmd = '{} sudo -u {} manage_reservations list'.format(emulab.SSH_CMD, username)
+    emulab_cmd = '{} sudo -u {} manage_reservations list'.format(emulab.SSH_BOSS, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     json_string = emulab.parse_response(emulab_stdout)
 

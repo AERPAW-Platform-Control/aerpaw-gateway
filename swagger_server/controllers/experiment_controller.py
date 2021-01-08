@@ -41,7 +41,7 @@ def create_experiment(body):  # noqa: E501
         req.project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo -u {} start-experiment -a {} -w --name {} --project {} {}'.format(
-        emulab.SSH_CMD, req.username, urn, req.name, req.project, req.profile)
+        emulab.SSH_BOSS, req.username, urn, req.name, req.project, req.profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
     return ApiResponse(code=0, output="Please use getExperiment to check whether success or fail")
 
@@ -66,7 +66,7 @@ def delete_experiment(experiment, username=None, project=None):  # noqa: E501
         project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo -u {} manage_instance terminate {},{}'.format(
-        emulab.SSH_CMD, username, project, experiment)
+        emulab.SSH_BOSS, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
     return 'OK'
 
@@ -85,7 +85,7 @@ def get_experiments(username=None):  # noqa: E501
     if username is None:
         username = emulab.EMULAB_USER
 
-    emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_experiments'.format(emulab.SSH_CMD, username)
+    emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_experiments'.format(emulab.SSH_BOSS, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     experiments = []
     if emulab_stdout:
@@ -123,7 +123,7 @@ def query_experiment(experiment, username=None, project=None):  # noqa: E501
         project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo -u {} manage_instance status {},{}'.format(
-        emulab.SSH_CMD, username, project, experiment)
+        emulab.SSH_BOSS, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
     # example of output: b'Status: ready\nUUID: dc6df64d-0ef9-11eb-9b1f-6cae8b3bf14a\nwbstore: dd41e11e-0ef9-11eb-9b1f-6cae8b3bf14a\n'
     if len(emulab_stdout) == 0 or emulab_stdout.decode('utf-8').find('Status') < 0:

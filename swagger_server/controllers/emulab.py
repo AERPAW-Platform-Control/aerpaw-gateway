@@ -17,9 +17,10 @@ PARSE_PL_FILE = os.getenv('PARSE_PL_FILE')
 BOSS_HOST = os.getenv('BOSS_HOST')
 EMULAB_USER = os.getenv('EMULAB_USER')
 EMULAB_PROJ = os.getenv('EMULAB_PROJ')
-SCP_CMD = 'scp -i ~/.ssh/id_rsa'
-SSH_CMD = 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no {}@{}'.format(EMULAB_USER, BOSS_HOST)
-SSH_STR = 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no'
+SSH_KEY = '~/.ssh/id_rsa'
+SCP_CMD = 'scp -i {}'.format(SSH_KEY)
+SSH_STR = 'ssh -i {} -o StrictHostKeyChecking=no'.format(SSH_KEY)
+SSH_BOSS = '{} {}@{}'.format(SSH_STR, EMULAB_USER, BOSS_HOST)
 usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()), EMULAB_USER)
 logger = logging.getLogger(__name__)
 
@@ -174,7 +175,7 @@ def send_file(filepath):
     """
     logger.info('filepath = {}'.format(filepath))
     scp_args = shlex.split('{} {} {}@{}:/tmp/'.format(SCP_CMD, filepath, EMULAB_USER, BOSS_HOST))
-    # ssh_args = shlex.split('{} chmod 644 /tmp/{}'.format(SSH_CMD, os.path.basename(filepath)))
+    # ssh_args = shlex.split('{} chmod 644 /tmp/{}'.format(SSH_BOSS, os.path.basename(filepath)))
     try:
         subprocess.check_output(scp_args, stderr=subprocess.STDOUT)
         # subprocess.check_output(ssh_args, stderr=subprocess.STDOUT)

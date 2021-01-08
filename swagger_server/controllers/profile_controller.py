@@ -34,12 +34,12 @@ def create_profile(body):  # noqa: E501
     xmlpath = emulab.send_file(xmlfile)
 
     emulab_cmd = '{} sudo -u {} manage_profile create {}'.format(
-                emulab.SSH_CMD, req.creator, xmlpath)
+                emulab.SSH_BOSS, req.creator, xmlpath)
     emulab.send_request(emulab_cmd)
 
     # clean up the temporary files
     os.unlink(xmlfile)
-    emulab_cmd = '{} sudo rm {}'.format(emulab.SSH_CMD, xmlpath)
+    emulab_cmd = '{} sudo rm {}'.format(emulab.SSH_BOSS, xmlpath)
     emulab.send_request(emulab_cmd)
 
     response = ApiResponse(code=0,
@@ -68,7 +68,7 @@ def delete_profile(name, username=None, project=None):  # noqa: E501
         project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo -u {} manage_profile delete {},{}'.format(
-        emulab.SSH_CMD, username, project, name)
+        emulab.SSH_BOSS, username, project, name)
     emulab.send_request(emulab_cmd)
     response = ApiResponse(code=0,
                            output="Please use getProfile to check whether success or fail")
@@ -90,7 +90,7 @@ def get_profiles(username=None):  # noqa: E501
         logger.info('user default user!')
 
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_profiles'.format(
-                    emulab.SSH_CMD, username)
+                    emulab.SSH_BOSS, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
     profiles = []
     if emulab_stdout:
@@ -127,7 +127,7 @@ def query_profile(profile, username=None, project=None):  # noqa: E501
         project = emulab.EMULAB_PROJ
 
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} query_profile {} {}'.format(
-        emulab.SSH_CMD, username, project, profile)
+        emulab.SSH_BOSS, username, project, profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
     found_profile = None
     if emulab_stdout:
