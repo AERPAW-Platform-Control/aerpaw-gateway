@@ -19,6 +19,7 @@ EMULAB_USER = os.getenv('EMULAB_USER')
 EMULAB_PROJ = os.getenv('EMULAB_PROJ')
 SCP_CMD = 'scp -i ~/.ssh/id_rsa'
 SSH_CMD = 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no {}@{}'.format(EMULAB_USER, BOSS_HOST)
+SSH_STR = 'ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no'
 usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()), EMULAB_USER)
 logger = logging.getLogger(__name__)
 
