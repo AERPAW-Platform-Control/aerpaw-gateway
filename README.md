@@ -37,13 +37,13 @@ docker run --rm -it \
 and open your browser to here:
 
 ```
-http://localhost:8080/aerpawgateway/1.0.0/ui/
+http://127.0.0.1:8888/aerpawgateway/1.0.0/ui/
 ```
 
 Your Swagger definition lives here:
 
 ```
-http://localhost:8080/aerpawgateway/1.0.0/swagger.json
+http://127.0.0.1:8888/aerpawgateway/1.0.0/swagger.json
 ```
 
 logging file:
