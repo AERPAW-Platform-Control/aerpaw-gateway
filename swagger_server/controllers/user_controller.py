@@ -29,7 +29,10 @@ def adduser(body, experiment, project=None):  # noqa: E501
         body = Userkey.from_dict(connexion.request.get_json())  # noqa: E501
         script = "set -ux; sudo adduser --home /home/newuser/ --disabled-password --gecos '' newuser; \
         sudo usermod -aG root newuser; sudo -u newuser mkdir /home/newuser/.ssh; \
-        sudo -u newuser echo '{}' > /tmp/authorized_keys; \
+        sudo cp ~/.ssh/* /home/newuser/.ssh/; \
+        touch /tmp/authorized_keys; \
+        cat ~/.ssh/id_rsa.pub >> /tmp/authorized_keys; \
+        echo '{}' >> /tmp/authorized_keys; \
         sudo mv /tmp/authorized_keys /home/newuser/.ssh;\
         sudo chown -R newuser:newuser /home/newuser/.ssh;".format(body.pubkey)
         adduser_script = script.replace('newuser', body.user)
