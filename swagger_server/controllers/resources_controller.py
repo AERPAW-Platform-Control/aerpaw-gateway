@@ -3,6 +3,7 @@ import six
 
 from swagger_server.models.profile import Profile  # noqa: E501
 from swagger_server.models.resource import Resource  # noqa: E501
+from swagger_server.models.vnode import Vnode  # noqa: F401,E501
 from swagger_server import util
 import os
 from flask import abort
@@ -11,6 +12,8 @@ import geni.util
 import geni.aggregate.cloudlab
 import geni.aggregate.pgutil as ProtoGENI
 import logging
+import tempfile, os, subprocess
+import xml.etree.ElementTree as ET
 
 logger = logging.getLogger(__name__)
 
@@ -78,5 +81,66 @@ def parse_resources(body):  # noqa: E501
     :rtype: Resource
     """
     if connexion.request.is_json:
-        body = Profile.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+        profile = Profile.from_dict(connexion.request.get_json())  # noqa: E501
+        script = profile.script
+    else:
+        abort(405, "Invalid input")
+
+    if script is "":
+        abort(405, "No script is provided")
+
+    fd, path = tempfile.mkstemp(suffix='.py')
+    with open(path, 'w') as f:
+        f.write(script)
+    # with open(path, 'r') as f:
+    #    print(f.read())
+    cmd = 'python {}'.format(path)
+    rspec = subprocess.check_output(cmd, stderr=subprocess.STDOUT, shell=True).decode()
+    logger.info(rspec)
+    os.unlink(path)
+
+    return parse_rspec_profile(rspec=rspec)
+
+
+def parse_rspec_profile(rspec):
+    try:
+        root = ET.fromstring(rspec)
+        nodes = root.findall(".//{http://www.geni.net/resources/rspec/3}node")
+        vnodes = []
+        for node in nodes:
+            client_id = node.attrib['client_id'] # eg. 'node1'
+            if 'component_id' in node.attrib:
+                component_id = node.attrib['component_id']
+            else:
+                component_id = ''
+
+            element_hardware_type = node.find(".//{http://www.geni.net/resources/rspec/3}hardware_type")
+            if element_hardware_type is None:
+                hardware_type = ''
+            else:
+                hardware_type = element_hardware_type.attrib['name']
+
+            element_sliver_type = node.find(".//{http://www.geni.net/resources/rspec/3}sliver_type")
+            sliver_type = element_sliver_type.attrib['name']
+            element_disk_image = element_sliver_type.find(".//{http://www.geni.net/resources/rspec/3}disk_image")
+            if element_disk_image is None:
+                disk_image = ''
+            else:
+                disk_image = element_disk_image.attrib['name']
+
+            newnode = Vnode(name=client_id,                         # 'node1'
+                            node=component_id,                      # 'CC1' or 'CC2'
+                            type=sliver_type,                       # 'raw' or 'raw-pc'
+                            hardware_type=hardware_type,            # 'FixedNode'
+                            disk_image=disk_image,                  # 'UBUNTU20-64-STD'
+                            hostname='',
+                            ipv4='')
+            vnodes.append(newnode)
+            logger.info(newnode)
+        resources = Resource(rspec=rspec, vnodes=vnodes)
+    except:
+        abort(400)
+
+    return resources
+
+
