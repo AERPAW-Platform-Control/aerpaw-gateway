@@ -151,6 +151,27 @@ paths:
         "404":
           description: Reservation not found
       x-openapi-router-controller: swagger_server.controllers.reservation_controller
+  /resources/parse_script:
+    post:
+      tags:
+      - resources
+      summary: Parse resources
+      description: Parse resources
+      operationId: parse_resources
+      requestBody:
+        $ref: '#/components/requestBodies/Profile'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        "400":
+          description: Bad request
+        "405":
+          description: Invalid input
+      x-openapi-router-controller: swagger_server.controllers.resources_controller
   /resources:
     get:
       tags:

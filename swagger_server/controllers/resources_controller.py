@@ -1,6 +1,7 @@
 import connexion
 import six
 
+from swagger_server.models.profile import Profile  # noqa: E501
 from swagger_server.models.resource import Resource  # noqa: E501
 from swagger_server import util
 import os
@@ -65,3 +66,17 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
 
     return emulab_stdout
 """
+
+def parse_resources(body):  # noqa: E501
+    """Parse resources
+
+    Parse resources # noqa: E501
+
+    :param body: Profile Object
+    :type body: dict | bytes
+
+    :rtype: Resource
+    """
+    if connexion.request.is_json:
+        body = Profile.from_dict(connexion.request.get_json())  # noqa: E501
+    return 'do some magic!'
