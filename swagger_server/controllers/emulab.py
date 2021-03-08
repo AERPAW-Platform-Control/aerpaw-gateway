@@ -225,12 +225,12 @@ def get_reservable_nodes(ad):
     return reservable_nodes
 
 
-def parse_manifest(ad):
+def parse_manifest(rspec):
     """parse_manifest
 
     """
     rspecfile = tempfile.NamedTemporaryFile(delete=False)
-    rspecfile.write(ad.text.encode())
+    rspecfile.write(rspec.encode())
     rspecfile.close()
     tree = ET.parse(rspecfile.name)
     os.unlink(rspecfile.name)
@@ -249,15 +249,32 @@ def parse_manifest(ad):
 
         # element_interface = node.find(".//{http://www.geni.net/resources/rspec/3}interface")
         element_vnode = node.find(".//{http://www.protogeni.net/resources/rspec/ext/emulab/1}vnode")
-        element_host = node.find(".//{http://www.geni.net/resources/rspec/3}host")
         element_login = node.find(
             ".//{http://www.geni.net/resources/rspec/3}services//{http://www.geni.net/resources/rspec/3}login")
-        newnode = Vnode(name=client_id,                     # 'node1'
-                        node=element_vnode.attrib['name'],  # 'pc1' or 'pc2'
-                        type=slivertype,                    # 'raw-pc'
-                        hardware_type=element_vnode.attrib['hardware_type'],  # 'x3651'
+
+        ipv4 = ''
+        if slivertype == 'raw-pc':
+            element_host_in_node = node.find(".//{http://www.geni.net/resources/rspec/3}host")
+            if 'ipv4' in element_host_in_node.attrib:
+                ipv4 = element_host_in_node.attrib['ipv4']
+            else:
+                logger.error('cannot find IP address information for {}'.format(slivertype))
+        else:
+            element_host = root.find(".//{http://www.protogeni.net/resources/rspec/ext/emulab/1}host")
+            if 'ipv4' in element_host.attrib:
+                ipv4 = element_host.attrib['ipv4']
+            else:
+                logger.error('cannot find IP address information for {}'.format(slivertype))
+
+        port = element_login.attrib['port']
+        logger.warning('port: ' + port)
+
+        newnode = Vnode(name=client_id,                     # 'node1', the id defined in geni-lib script
+                        node=element_vnode.attrib['name'],  # 'pc1'/'pc2' or 'pcvm2-1', the node returned from emulab testbed
+                        type=slivertype,                    # 'raw-pc' or 'emulab-xen'
+                        hardware_type=element_vnode.attrib['hardware_type'],  # 'x3651' or 'pcvm'
                         disk_image=element_vnode.attrib['disk_image'],
                         hostname=element_login.attrib['hostname'],
-                        ipv4=element_host.attrib['ipv4'])
+                        ipv4=ipv4+':'+port)
         nodelist.append(newnode)
     return nodelist

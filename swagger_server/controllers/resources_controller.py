@@ -44,9 +44,11 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
             urn = 'urn:publicid:IDN+exogeni.net:{}+slice+{}'.format(project, experiment)
             logger.info('urn = {}'.format(urn))
             ad = geni.aggregate.cloudlab.Renci.listresources(context, urn)
-            vnodes = emulab.parse_manifest(ad)
+            logger.info(ad.text)
+
+            vnodes = emulab.parse_manifest(rspec=ad.text)
             resources = Resource(rspec=ad.text, vnodes=vnodes)
-            logger.info(resources)
+            logger.info(vnodes)
         else:
             logger.info('list resources')
             ad = geni.aggregate.cloudlab.Renci.listresources(context)
