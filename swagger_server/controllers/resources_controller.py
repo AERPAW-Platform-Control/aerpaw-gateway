@@ -141,7 +141,7 @@ def parse_rspec_profile(rspec):
             logger.info(newnode)
         resources = Resource(rspec=rspec, vnodes=vnodes)
     except:
-        abort(400)
+        abort(400, description='exception occured while parsing rspec profile')
 
     return resources
 
