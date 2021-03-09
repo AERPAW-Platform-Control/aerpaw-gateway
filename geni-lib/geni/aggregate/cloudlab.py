@@ -21,7 +21,6 @@ class CloudLabAM(PGCompute): pass
 Clemson = CloudLabAM("cl-clemson", "boss.clemson.cloudlab.us", "urn:publicid:IDN+clemson.cloudlab.us+authority+cm")
 Utah = CloudLabAM("cl-utah", "boss.utah.cloudlab.us", "urn:publicid:IDN+utah.cloudlab.us+authority+cm")
 Wisconsin = CloudLabAM("cl-wisconsin", "www.wisc.cloudlab.us", "urn:publicid:IDN+wisc.cloudlab.us+authority+cm")
-Renci = CloudLabAM("renci", "emulab-boss.exogeni.net", "urn:publicid:IDN+exogeni.net+authority+cm")
 
 def aggregates ():
   module = sys.modules[__name__]

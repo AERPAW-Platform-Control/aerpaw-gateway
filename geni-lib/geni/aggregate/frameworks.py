@@ -216,13 +216,13 @@ class Framework(object):
 
 
 class ProtoGENI(Framework):
-  SA = "https://emulab-boss.exogeni.net:12369/protogeni/xmlrpc/project/%s/sa"
-  MA = "https://emulab-boss.exogeni.net:12369/protogeni/xmlrpc/project/%s/sa"
+  SA = "https://www.emulab.net:12369/protogeni/xmlrpc/project/%s/sa"
+  MA = "https://www.emulab.net:12369/protogeni/xmlrpc/project/%s/sa"
 
   def __init__ (self, name = "pg"):
     super(ProtoGENI, self).__init__("emulab")
     self._type = "pgch"
-    self._ch = "https://emulab-boss.exogeni.net:12369/protogeni/xmlrpc/ch"
+    self._ch = "https://www.emulab.net:12369/protogeni/xmlrpc/ch"
     self._sa = None
     self._ma = None
 
@@ -546,10 +546,10 @@ class Portal(CHAPI2):
 
 
 class EmulabCH2(CHAPI2):
-  SA = "https://emulab-boss.exogeni.net:12369/protogeni/xmlrpc/geni-sa/2"
-#  SA = "https://emulab-boss.exogeni.net:12369/protogeni/xmlrpc/project/%s/geni-sa/2"
-  MA = "https://emulab-boss.exogeni.net:12369/protogeni/xmlrpc/geni-ma"
-#  MA = "https://emulab-boss.exogeni.net:12369/protogeni/xmlrpc/project/%s/geni-ma"
+  SA = "https://www.emulab.net:12369/protogeni/xmlrpc/geni-sa/2"
+#  SA = "https://www.emulab.net:12369/protogeni/xmlrpc/project/%s/geni-sa/2"
+  MA = "https://www.emulab.net:12369/protogeni/xmlrpc/geni-ma"
+#  MA = "https://www.emulab.net:12369/protogeni/xmlrpc/project/%s/geni-ma"
 
   def __init__ (self):
     super(EmulabCH2, self).__init__("emulab-ch2")

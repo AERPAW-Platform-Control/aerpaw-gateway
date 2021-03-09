@@ -89,8 +89,8 @@ class Request(geni.rspec.RSpec):
     else:
       f = open(path, "w+")
 
-    buf = self.toXMLString(True)
-    f.write(buf.decode('utf-8'))
+    buf = self.toXMLString(True,True)
+    f.write(buf)
 
     if path is not None:
       f.close()
@@ -149,6 +149,7 @@ class Resource(object):
 
 class NodeType(object):
   XEN = "emulab-xen"
+  DOCKER = "emulab-docker"
   RAW = "raw"
   VM = "emulab-xen"
 
@@ -216,6 +217,8 @@ class IPv4Address(Address):
 
 
 class Interface(object):
+  EXTENSIONS = []
+
   class InvalidAddressTypeError(Exception):
     def __init__ (self, addr):
       super(Interface.InvalidAddressTypeError, self).__init__()
@@ -231,8 +234,24 @@ class Interface(object):
     self.bandwidth = None
     self.latency = None
     self.plr = None
+    self._ext_children = []
     if address:
       self.addAddress(address)
+    for name,ext in Interface.EXTENSIONS:
+      self._wrapext(name,ext)
+
+  def _wrapext (self, name, klass):
+    @functools.wraps(klass.__init__)
+    def wrap(*args, **kw):
+      if getattr(klass, "__ONCEONLY__", False):
+        if any(map(lambda x: isinstance(x,klass),self._ext_children)):
+          raise DuplicateExtensionError(klass)
+      instance = klass(*args, **kw)
+      if getattr(klass, "__WANTPARENT__", False):
+        instance._parent = self
+      self._ext_children.append(instance)
+      return instance
+    setattr(self, name, wrap)
 
   @property
   def name (self):
@@ -254,6 +273,8 @@ class Interface(object):
         intf.attrib["component_id"] = self.component_id
     for addr in self.addresses:
       addr._write(intf)
+    for obj in self._ext_children:
+      obj._write(intf)
     return intf
 
 
@@ -530,6 +551,20 @@ class StitchedLink(Link):
 Request.EXTENSIONS.append(("StitchedLink", StitchedLink))
 
 class Node(Resource):
+  """A basic Node class.  Typically you want to instantiate one of its subclasses, such as `RawPC`, `XenVM`, or `DockerContainer`.
+
+  Args:
+    name (str): Your name for this node.  This must be unique within a single `Request` object.
+    ntype (str): The physical or virtual machine type to which this node should be mapped.
+    component_id (Optional[str]): The `component_id` of the site physical node to which you want to bind this node.
+    exclusive (Optional[bool]): Request this container on an isolated host used only by your sliver.  Defaults to unspecified, allowing the site processing the request rspec to assign resources as it prefers.
+
+  Attributes:
+    client_id (str): Your name for this node.  This must be unique within a single `Request` object.
+    component_id (Optional[str]): The `component_id` of the site physical node to which you want to bind this node.
+    exclusive (Optional[bool]): Request this container on an isolated host used only by your sliver.  Defaults to unspecified, allowing the site processing the request rspec to assign resources as it prefers.
+    disk_image (Optional[str]): The disk image that should be loaded and run on this node.  Should be an image URN.
+  """
   EXTENSIONS = []
 
   def __init__ (self, name, ntype, component_id = None, exclusive = None):

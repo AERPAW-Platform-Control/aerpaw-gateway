@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2017 The University of Utah
+# Copyright (c) 2016-2019 The University of Utah
 
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@ Common set of RSpec extensions supported by many Emulab-based aggregates
 from __future__ import absolute_import
 
 from ..pg import Request, Namespaces, Link, Node, Service, Command, RawPC
+from ..pg import NodeType
 import geni.namespaces as GNS
 from lxml import etree as ET
 
@@ -148,6 +149,77 @@ class setNoInterSwitchLinks(object):
         return root
 
 Link.EXTENSIONS.append(("setNoInterSwitchLinks", setNoInterSwitchLinks))
+
+class setJumboFrames(object):
+    """Added to a Link or LAN object, this extension enables jumbo frames
+    on the link (9000 byte MTU). Not all clusters support this option.
+    """
+    __ONCEONLY__ = True
+    
+    def __init__(self):
+        self._enabled = True
+    
+    def _write(self, root):
+        if self._enabled == False:
+            return root
+        el = ET.SubElement(root, "{%s}jumboframes" % (Namespaces.EMULAB.name))
+        el.attrib["enabled"] = "true"
+        return root
+
+Link.EXTENSIONS.append(("setJumboFrames", setJumboFrames))
+
+class createSharedVlan(object):
+    """Added to a Link or LAN object, turns the new vlan into a shared
+    vlan that can be shared between independent experiments. 
+    """
+    __ONCEONLY__ = True
+    
+    def __init__(self, name):
+        self._enabled = True
+        self._name = name
+    
+    def _write(self, root):
+        if self._enabled == False:
+            return root
+        el = ET.SubElement(root, "{%s}create_shared_vlan" % (GNS.SVLAN.name))
+        el.attrib["name"] = self._name
+        return root
+
+Link.EXTENSIONS.append(("createSharedVlan", createSharedVlan))
+
+class setProperties(object):
+    """Added to a Link or LAN object, this extension tells Emulab based
+    clusters to set the symmetrical properties of the entire link/lan to
+    the desired characteristics (bandwidth, latency, plr). This produces
+    more efficient XML then setting a property on every source/destination
+    pair, especially on a very large lan. Bandwidth is in Kbps, latency in
+    milliseconds, plr a floating point number between 0 and 1. Use keyword
+    based arguments, all arguments are optional:
+    
+        link.setProperties(bandwidth=100000, latency=10, plr=0.5)
+    
+    """
+    __ONCEONLY__ = True
+    
+    def __init__(self, bandwidth=None, latency=None, plr=None):
+        self._bandwidth = bandwidth
+        self._latency   = latency
+        self._plr       = plr
+    
+    def _write(self, root):
+        if (self._bandwidth == None and self._latency == None and
+            self._plr == None):
+            return root
+        el = ET.SubElement(root, "{%s}properties" % (Namespaces.EMULAB.name))
+        if self._bandwidth != None:
+            el.attrib["capacity"] = str(self._bandwidth)
+        if self._latency != None:
+            el.attrib["latency"] = str(self._latency)
+        if self._plr != None:
+            el.attrib["packet_loss"] = str(self._plr)
+        return root
+
+Link.EXTENSIONS.append(("setProperties", setProperties))
 
 class setUseTypeDefaultImage(object):
     """Added to a node that does not specify a disk image, this extension
@@ -379,3 +451,152 @@ class ShapedLink(BridgedLink):
     super(ShapedLink, self).__init__(name=name)
 
 Request.EXTENSIONS.append(("ShapedLink", ShapedLink))
+
+
+class installRootKeys(object):
+    """Added to a node this extension will tell Emulab based aggregates to
+    to install private and/or public ssh keys for root so that root can ssh
+    between nodes in your experiment without having to provide a password.
+    By default both the private and public key are installed on each node.
+    Use this extension to restrict where keys are installed in order to
+    customize which nodes are trusted to initiate a root ssh to another node.
+    For example:
+
+            # Install a private/public key on node1
+            node1.installRootKeys(True, True)
+            # Install just the public key on node2
+            node2.installRootKeys(False, True)
+    """
+    
+    def __init__(self, private = True, public = True):
+        self._include = True
+        self._private = private
+        self._public  = public
+    
+    def _write(self, root):
+        if self._include == False:
+            return root
+        el = ET.SubElement(root, "{%s}rootkey" % (Namespaces.EMULAB.name))
+        if self._private:
+            el.attrib["private"] = "true";
+        else:
+            el.attrib["private"] = "false";
+        if self._public:
+            el.attrib["public"] = "true";
+        else:
+            el.attrib["public"] = "false";
+        return root
+
+Node.EXTENSIONS.append(("installRootKeys", installRootKeys))
+
+class disableRootKeys(object):
+    """Added to a request this extension will tell Emulab based aggregates to
+    to not install private and/or public ssh keys for root.
+    """
+    __ONCEONLY__ = True
+
+    def __init__(self):
+        self._enabled = True
+    
+    def _write(self, root):
+        if self._enabled == True:
+            el = ET.SubElement(root,
+                               "{%s}disablerootkey" % (Namespaces.EMULAB.name))
+        return root
+
+Request.EXTENSIONS.append(("disableRootKeys", disableRootKeys))
+
+class skipVlans(object):
+    """Added to a request this extension will tell Emulab based aggregates to
+    to not setup or tear down vlans. You should not use this!
+    """
+    __ONCEONLY__ = True
+
+    def __init__(self):
+        self._enabled = True
+    
+    def _write(self, root):
+        if self._enabled == True:
+            el = ET.SubElement(root, "{%s}skipvlans" % (Namespaces.EMULAB.name))
+        return root
+
+Request.EXTENSIONS.append(("skipVlans", skipVlans))
+
+class Attribute(object):
+    """Added to a node, this Emulab extension becomes a node_attribute.
+    """
+    def __init__ (self, key, value):
+        self.key = key
+        self.value = value
+
+    def _write (self, node):
+        at = ET.SubElement(node,
+                           "{%s}node_attribute" % (Namespaces.EMULAB.name))
+        at.attrib["key"] = self.key
+        at.attrib["value"] = self.value
+        return node
+
+Node.EXTENSIONS.append(("Attribute", Attribute))
+
+class wirelessSite(object):
+    """A simple extension to mark a node as being part of a given wireless aggregate.
+    """
+    def __init__(self, id, type, urn):
+        self.id = id
+        self.type = type
+        self.urn = urn
+
+    def _write(self, node):
+        el = ET.SubElement(
+            node,"{%s}wireless-site" % (Namespaces.EMULAB.name))
+        el.attrib['id'] = self.id
+        el.attrib['type'] = self.type
+        el.attrib['urn'] = self.urn
+        return node
+
+Node.EXTENSIONS.append(("wirelessSite", wirelessSite))
+
+class ExperimentFirewall(Node):
+    """Added to a request this extension will tell Emulab to add a firewall
+    to the control network. You may supply optional rules in iptables syntax.
+    """
+    __ONCEONLY__ = True
+
+    class Style(object):
+        OPEN     = "open"
+        CLOSED   = "closed"
+        BASIC    = "basic"
+    
+    def __init__ (self, name, style):
+        super(ExperimentFirewall, self).__init__(name, "firewall")
+        self.style = style
+        self.rules = []
+
+    def addRule(self, rule):
+        self.rules.append(rule)
+
+    def _write (self, root):
+        nd = super(ExperimentFirewall, self)._write(root)
+        st = nd.find("{%s}sliver_type" % (GNS.REQUEST.name))
+        fw = ET.SubElement(st, "{%s}firewall_config" % (Namespaces.EMULAB.name))
+        fw.attrib["style"] = self.style
+        for rule in self.rules:
+            el = ET.SubElement(fw, "{%s}rule" % (Namespaces.EMULAB.name))
+            el.text = rule
+        return nd
+
+Request.EXTENSIONS.append(("ExperimentFirewall", ExperimentFirewall))
+
+class L1Link(Link):
+  def __init__ (self, name = None):
+    super(L1Link, self).__init__(name, "layer1")
+
+Request.EXTENSIONS.append(("L1Link", L1Link))
+
+class Switch(Node):
+  def __init__ (self, name, component_id = None):
+    super(Switch, self).__init__(name, NodeType.RAW,
+                                 component_id = component_id, exclusive = True)
+    self.setUseTypeDefaultImage()
+
+Request.EXTENSIONS.append(("Switch", Switch))

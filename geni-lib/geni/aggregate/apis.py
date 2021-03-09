@@ -117,10 +117,9 @@ class AMAPIv2(object):
 
     surn = None
     if sname:
-      surn = sname
-      #sinfo = context.getSliceInfo(sname)
-      #surn = sinfo.urn
-      #creds.append(open(sinfo.path, "r", encoding="latin-1").read())
+      sinfo = context.getSliceInfo(sname)
+      surn = sinfo.urn
+      creds.append(open(sinfo.path, "r", encoding="latin-1").read())
 
     creds.append(open(context.usercred_path, "r", encoding="latin-1").read())
 
