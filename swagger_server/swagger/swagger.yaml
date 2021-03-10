@@ -733,6 +733,7 @@ components:
           type: x3651
         vnodes:
         - node: pc1
+          sshport: "22"
           hostname: pc1.exogeni.net
           disk_image: emulab-ops/UBUNTU16-64-STD:0
           ipv4: 152.54.13.22
@@ -740,6 +741,7 @@ components:
           name: node1
           type: raw-pc
         - node: pc1
+          sshport: "22"
           hostname: pc1.exogeni.net
           disk_image: emulab-ops/UBUNTU16-64-STD:0
           ipv4: 152.54.13.22
@@ -791,9 +793,13 @@ components:
         ipv4:
           type: string
           example: 152.54.13.22
+        sshport:
+          type: string
+          example: "22"
       description: VNode type of resource
       example:
         node: pc1
+        sshport: "22"
         hostname: pc1.exogeni.net
         disk_image: emulab-ops/UBUNTU16-64-STD:0
         ipv4: 152.54.13.22

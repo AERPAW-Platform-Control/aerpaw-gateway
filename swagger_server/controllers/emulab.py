@@ -275,6 +275,7 @@ def parse_manifest(rspec):
                         hardware_type=element_vnode.attrib['hardware_type'],  # 'x3651' or 'pcvm'
                         disk_image=element_vnode.attrib['disk_image'],
                         hostname=element_login.attrib['hostname'],
-                        ipv4=ipv4+':'+port)
+                        ipv4=ipv4,
+                        sshport=port)
         nodelist.append(newnode)
     return nodelist

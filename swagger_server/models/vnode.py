@@ -14,7 +14,7 @@ class Vnode(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, name: str=None, node: str=None, type: str=None, hardware_type: str=None, disk_image: str=None, hostname: str=None, ipv4: str=None):  # noqa: E501
+    def __init__(self, name: str=None, node: str=None, type: str=None, hardware_type: str=None, disk_image: str=None, hostname: str=None, ipv4: str=None, sshport: str=None):  # noqa: E501
         """Vnode - a model defined in Swagger
 
         :param name: The name of this Vnode.  # noqa: E501
@@ -31,6 +31,8 @@ class Vnode(Model):
         :type hostname: str
         :param ipv4: The ipv4 of this Vnode.  # noqa: E501
         :type ipv4: str
+        :param sshport: The sshport of this Vnode.  # noqa: E501
+        :type sshport: str
         """
         self.swagger_types = {
             'name': str,
@@ -39,7 +41,8 @@ class Vnode(Model):
             'hardware_type': str,
             'disk_image': str,
             'hostname': str,
-            'ipv4': str
+            'ipv4': str,
+            'sshport': str
         }
 
         self.attribute_map = {
@@ -49,7 +52,8 @@ class Vnode(Model):
             'hardware_type': 'hardware_type',
             'disk_image': 'disk_image',
             'hostname': 'hostname',
-            'ipv4': 'ipv4'
+            'ipv4': 'ipv4',
+            'sshport': 'sshport'
         }
         self._name = name
         self._node = node
@@ -58,6 +62,7 @@ class Vnode(Model):
         self._disk_image = disk_image
         self._hostname = hostname
         self._ipv4 = ipv4
+        self._sshport = sshport
 
     @classmethod
     def from_dict(cls, dikt) -> 'Vnode':
@@ -216,3 +221,24 @@ class Vnode(Model):
         """
 
         self._ipv4 = ipv4
+
+    @property
+    def sshport(self) -> str:
+        """Gets the sshport of this Vnode.
+
+
+        :return: The sshport of this Vnode.
+        :rtype: str
+        """
+        return self._sshport
+
+    @sshport.setter
+    def sshport(self, sshport: str):
+        """Sets the sshport of this Vnode.
+
+
+        :param sshport: The sshport of this Vnode.
+        :type sshport: str
+        """
+
+        self._sshport = sshport

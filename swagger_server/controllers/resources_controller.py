@@ -134,9 +134,8 @@ def parse_rspec_profile(rspec):
                             node=component_id,                      # 'CC1' or 'CC2'
                             type=sliver_type,                       # 'raw' or 'raw-pc'
                             hardware_type=hardware_type,            # 'FixedNode'
-                            disk_image=disk_image,                  # 'UBUNTU20-64-STD'
-                            hostname='',
-                            ipv4='')
+                            disk_image=disk_image)                  # 'UBUNTU20-64-STD'
+
             vnodes.append(newnode)
             logger.info(newnode)
         resources = Resource(rspec=rspec, vnodes=vnodes)
