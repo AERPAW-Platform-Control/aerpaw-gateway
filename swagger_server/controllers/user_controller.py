@@ -42,7 +42,7 @@ def adduser(body, experiment, project=None):  # noqa: E501
         for vnode in res.vnodes:
             if "UBUNTU" in vnode.disk_image:
                 emulab_cmd = 'echo "{}" | {} {}@{} -p {} /bin/bash'.format(
-                    adduser_script, emulab.SSH_STR, emulab.EMULAB_USER, vnode.hostname, vnode.sshport)
+                    adduser_script, emulab.SSH_STR, emulab.EMULAB_EXPERIMENT_USER, vnode.hostname, vnode.sshport)
                 logger.warning(emulab_cmd)
                 emulab_stdout = emulab.send_request(emulab_cmd)
             else:

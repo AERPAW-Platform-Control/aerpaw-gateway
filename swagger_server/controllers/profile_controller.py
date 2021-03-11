@@ -26,7 +26,7 @@ def create_profile(body):  # noqa: E501
         req = Profile.from_dict(connexion.request.get_json())  # noqa: E501
 
     if req.creator is None:
-        req.creator = emulab.EMULAB_USER
+        req.creator = emulab.EMULAB_EXPERIMENT_USER
     if req.project is None:
         req.project = emulab.EMULAB_PROJ
 
@@ -63,7 +63,7 @@ def delete_profile(name, username=None, project=None):  # noqa: E501
     """
 
     if username is None:
-        username = emulab.EMULAB_USER
+        username = emulab.EMULAB_EXPERIMENT_USER
     if project is None:
         project = emulab.EMULAB_PROJ
 
@@ -86,7 +86,7 @@ def get_profiles(username=None):  # noqa: E501
     :rtype: List[Profile]
     """
     if username is None:
-        username = emulab.EMULAB_USER
+        username = emulab.EMULAB_EXPERIMENT_USER
         logger.info('user default user!')
 
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_profiles'.format(
@@ -122,7 +122,7 @@ def query_profile(profile, username=None, project=None):  # noqa: E501
     :rtype: Profile
     """
     if username is None:
-        username = emulab.EMULAB_USER
+        username = emulab.EMULAB_EXPERIMENT_USER
     if project is None:
         project = emulab.EMULAB_PROJ
 

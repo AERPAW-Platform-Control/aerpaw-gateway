@@ -15,13 +15,14 @@ import logging
 
 PARSE_PL_FILE = os.getenv('PARSE_PL_FILE')
 BOSS_HOST = os.getenv('BOSS_HOST')
-EMULAB_USER = os.getenv('EMULAB_USER')
+EMULAB_ADMIN_USER = os.getenv('EMULAB_ADMIN_USER')
+EMULAB_EXPERIMENT_USER = os.getenv('EMULAB_EXPERIMENT_USER')
 EMULAB_PROJ = os.getenv('EMULAB_PROJ')
 SSH_KEY = '~/.ssh/id_rsa'
 SCP_CMD = 'scp -i {}'.format(SSH_KEY)
 SSH_STR = 'ssh -i {} -o StrictHostKeyChecking=no'.format(SSH_KEY)
-SSH_BOSS = '{} {}@{}'.format(SSH_STR, EMULAB_USER, BOSS_HOST)
-usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()), EMULAB_USER)
+SSH_BOSS = '{} {}@{}'.format(SSH_STR, EMULAB_ADMIN_USER, BOSS_HOST)
+usercred_file = '{}/.bssw/geni/emulab-ch2-{}-usercred.xml'.format(str(Path.home()), EMULAB_ADMIN_USER)
 logger = logging.getLogger(__name__)
 
 
@@ -174,7 +175,7 @@ def send_file(filepath):
         :rtype: xml path in boss
     """
     logger.info('filepath = {}'.format(filepath))
-    scp_args = shlex.split('{} {} {}@{}:/tmp/'.format(SCP_CMD, filepath, EMULAB_USER, BOSS_HOST))
+    scp_args = shlex.split('{} {} {}@{}:/tmp/'.format(SCP_CMD, filepath, EMULAB_ADMIN_USER, BOSS_HOST))
     # ssh_args = shlex.split('{} chmod 644 /tmp/{}'.format(SSH_BOSS, os.path.basename(filepath)))
     try:
         subprocess.check_output(scp_args, stderr=subprocess.STDOUT)
@@ -269,11 +270,15 @@ def parse_manifest(rspec):
         port = element_login.attrib['port']
         logger.warning('port: ' + port)
 
+        disk_image = ''
+        if 'disk_image' in element_vnode.attrib:
+            disk_image=element_vnode.attrib['disk_image']
+
         newnode = Vnode(name=client_id,                     # 'node1', the id defined in geni-lib script
                         node=element_vnode.attrib['name'],  # 'pc1'/'pc2' or 'pcvm2-1', the node returned from emulab testbed
                         type=slivertype,                    # 'raw-pc' or 'emulab-xen'
                         hardware_type=element_vnode.attrib['hardware_type'],  # 'x3651' or 'pcvm'
-                        disk_image=element_vnode.attrib['disk_image'],
+                        disk_image=disk_image,
                         hostname=element_login.attrib['hostname'],
                         ipv4=ipv4,
                         sshport=port)

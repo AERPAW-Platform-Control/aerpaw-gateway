@@ -36,7 +36,7 @@ def create_experiment(body):  # noqa: E501
         req.profile = emulab.EMULAB_PROJ + ',' + req.profile
 
     if req.username is None:
-        req.username = emulab.EMULAB_USER
+        req.username = emulab.EMULAB_EXPERIMENT_USER
     if req.project is None:
         req.project = emulab.EMULAB_PROJ
 
@@ -61,7 +61,7 @@ def delete_experiment(experiment, username=None, project=None):  # noqa: E501
     :rtype: None
     """
     if username is None:
-        username = emulab.EMULAB_USER
+        username = emulab.EMULAB_EXPERIMENT_USER
     if project is None:
         project = emulab.EMULAB_PROJ
 
@@ -83,7 +83,7 @@ def get_experiments(username=None):  # noqa: E501
     """
 
     if username is None:
-        username = emulab.EMULAB_USER
+        username = emulab.EMULAB_EXPERIMENT_USER
 
     emulab_cmd = '{} sudo python /root/aerpaw/querydb.py {} list_experiments'.format(emulab.SSH_BOSS, username)
     emulab_stdout = emulab.send_request(emulab_cmd)
@@ -118,7 +118,7 @@ def query_experiment(experiment, username=None, project=None):  # noqa: E501
     """
 
     if username is None:
-        username = emulab.EMULAB_USER
+        username = emulab.EMULAB_EXPERIMENT_USER
     if project is None:
         project = emulab.EMULAB_PROJ
 
