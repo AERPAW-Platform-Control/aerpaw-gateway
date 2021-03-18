@@ -38,6 +38,9 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
     try:
         emulab.maybe_renew_genicred()  # renew credential every 24 hour
         if experiment:
+
+            # we can use either way, geni-lib or boss command
+            # rspec = experiment_controller.dumpmanifest_experiment(experiment)
             if project is None:
                 project = emulab.EMULAB_PROJ
             logger.info('query manifest for experiment')
@@ -45,11 +48,13 @@ def list_resources(username=None, project=None, experiment=None):  # noqa: E501
             logger.info('urn = {}'.format(urn))
             ad = geni.aggregate.cloudlab.Renci.listresources(context, urn)
             logger.info(ad.text)
+            rspec = ad.text
+            vnodes = emulab.parse_manifest(rspec=rspec)
 
-            vnodes = emulab.parse_manifest(rspec=ad.text)
-            resources = Resource(rspec=ad.text, vnodes=vnodes)
+            resources = Resource(rspec=rspec, vnodes=vnodes)
             logger.info(vnodes)
         else:
+
             logger.info('list resources')
             ad = geni.aggregate.cloudlab.Renci.listresources(context)
             reservable = emulab.get_reservable_nodes(ad)

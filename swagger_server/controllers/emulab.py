@@ -231,7 +231,8 @@ def parse_manifest(rspec):
 
     """
     rspecfile = tempfile.NamedTemporaryFile(delete=False)
-    rspecfile.write(rspec.encode())
+    if type(rspec) is not bytes:
+        rspecfile.write(rspec.encode())
     rspecfile.close()
     tree = ET.parse(rspecfile.name)
     os.unlink(rspecfile.name)

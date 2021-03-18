@@ -122,17 +122,55 @@ def query_experiment(experiment, username=None, project=None):  # noqa: E501
     if project is None:
         project = emulab.EMULAB_PROJ
 
-    emulab_cmd = '{} sudo -u {} manage_instance status {},{}'.format(
+    emulab_cmd = '{} sudo -u {} manage_instance status {},{} -j'.format(
         emulab.SSH_BOSS, username, project, experiment)
     emulab_stdout = emulab.send_request(emulab_cmd)
-    # example of output: b'Status: ready\nUUID: dc6df64d-0ef9-11eb-9b1f-6cae8b3bf14a\nwbstore: dd41e11e-0ef9-11eb-9b1f-6cae8b3bf14a\n'
-    if len(emulab_stdout) == 0 or emulab_stdout.decode('utf-8').find('Status') < 0:
+    if len(emulab_stdout) == 0 or emulab_stdout.decode('utf-8').find('status') < 0:
         abort(404, description="No such instance")
 
-    results = dict(item.split(': ') for item in emulab_stdout.decode('utf-8').split('\n', 2))
+    # example of output:
+    # {
+    #  "name": "demo1",
+    #  "project": "Portal",
+    #  "status": "ready",
+    #  "uuid": "fe6cffea-87fc-11eb-9b1f-6cae8b3bf14a"
+    # }
+    results = json.loads(emulab_stdout)
     experiment = Experiment(name=experiment, project=project,
-                            status=results['Status'], uuid=results['UUID'])
+                            status=results['status'], uuid=results['uuid'])
+
     logger.info(results)
     return experiment
 
+
+def dumpmanifest_experiment(experiment, username=None, project=None):  # noqa: E501
+    """get status of specific experiment
+
+    get Experiment status of specific experiment # noqa: E501
+
+    :param experiment: experiment name to query
+    :type experiment: str
+    :param username: username for the request
+    :type username: str
+    :param project: project name
+    :type project: str
+
+    :rtype: Experiment
+    """
+
+    if username is None:
+        username = emulab.EMULAB_EXPERIMENT_USER
+    if project is None:
+        project = emulab.EMULAB_PROJ
+
+    emulab_cmd = '{} sudo -u {} manage_instance dumpmanifests {},{} -X -j'.format(
+        emulab.SSH_BOSS, username, project, experiment)
+    emulab_stdout = emulab.send_request(emulab_cmd)
+    if len(emulab_stdout) == 0:
+        abort(404, description="No such instance")
+
+    dic_manifest = json.loads(emulab_stdout)
+    logger.info(dic_manifest)
+
+    return list(dic_manifest.values())[0]
 
