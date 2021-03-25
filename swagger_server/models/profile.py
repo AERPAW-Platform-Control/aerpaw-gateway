@@ -14,7 +14,7 @@ class Profile(Model):
 
     Do not edit the class manually.
     """
-    def __init__(self, creator: str=None, name: str=None, project: str=None, version: str=None, created: str=None, script: str=None, rspec: str=None, uuid: str=None):  # noqa: E501
+    def __init__(self, creator: str=None, name: str=None, project: str=None, repourl: str=None, version: str=None, created: str=None, script: str=None, rspec: str=None, uuid: str=None):  # noqa: E501
         """Profile - a model defined in Swagger
 
         :param creator: The creator of this Profile.  # noqa: E501
@@ -23,6 +23,8 @@ class Profile(Model):
         :type name: str
         :param project: The project of this Profile.  # noqa: E501
         :type project: str
+        :param repourl: The repourl of this Profile.  # noqa: E501
+        :type repourl: str
         :param version: The version of this Profile.  # noqa: E501
         :type version: str
         :param created: The created of this Profile.  # noqa: E501
@@ -38,6 +40,7 @@ class Profile(Model):
             'creator': str,
             'name': str,
             'project': str,
+            'repourl': str,
             'version': str,
             'created': str,
             'script': str,
@@ -49,6 +52,7 @@ class Profile(Model):
             'creator': 'creator',
             'name': 'name',
             'project': 'project',
+            'repourl': 'repourl',
             'version': 'version',
             'created': 'created',
             'script': 'script',
@@ -58,6 +62,7 @@ class Profile(Model):
         self._creator = creator
         self._name = name
         self._project = project
+        self._repourl = repourl
         self._version = version
         self._created = created
         self._script = script
@@ -141,6 +146,27 @@ class Profile(Model):
         self._project = project
 
     @property
+    def repourl(self) -> str:
+        """Gets the repourl of this Profile.
+
+
+        :return: The repourl of this Profile.
+        :rtype: str
+        """
+        return self._repourl
+
+    @repourl.setter
+    def repourl(self, repourl: str):
+        """Sets the repourl of this Profile.
+
+
+        :param repourl: The repourl of this Profile.
+        :type repourl: str
+        """
+
+        self._repourl = repourl
+
+    @property
     def version(self) -> str:
         """Gets the version of this Profile.
 
@@ -200,8 +226,6 @@ class Profile(Model):
         :param script: The script of this Profile.
         :type script: str
         """
-        if script is None:
-            raise ValueError("Invalid value for `script`, must not be `None`")  # noqa: E501
 
         self._script = script
 

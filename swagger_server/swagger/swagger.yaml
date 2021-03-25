@@ -628,21 +628,19 @@ components:
     Profile:
       required:
       - name
-      - script
       type: object
       properties:
         creator:
           type: string
-          example: erika
         name:
           type: string
-          example: profileOneNode
+          example: profile-test001
         project:
           type: string
-          example: TestProject1
+        repourl:
+          type: string
         version:
           type: string
-          example: "0"
         created:
           type: string
         script:
@@ -677,11 +675,12 @@ components:
           type: string
       example:
         rspec: rspec
-        creator: erika
+        creator: creator
+        repourl: repourl
         created: created
-        name: profileOneNode
-        project: TestProject1
-        version: "0"
+        name: profile-test001
+        project: project
+        version: version
         uuid: uuid
         script: |
           """One raw PC running the default OS.
