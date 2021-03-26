@@ -43,6 +43,7 @@ def send_request(emulab_cmd):
         logger.info(stderr)
         logger.info('return code = {}'.format(proc.returncode))
     except subprocess.CalledProcessError as err:
+
         proc.returncode = 1
         stderr = err.output
 
@@ -62,6 +63,9 @@ def send_request(emulab_cmd):
             abort(400, description="Experiment name already in use")
         elif b'profile_name: Already in use' in stdout:
             abort(404, description="profile_name: Already in use")
+        elif 'updatefromrepo' in emulab_cmd and b'Not a repo based profile' in stderr:
+            # ignore following error because it's an internal operation by gateway itself not client.
+            logger.warning('ignore error by "updatefromrepo"')
         elif len(stdout) > 0:
             abort(500, description=stdout.decode("utf-8"))
         else:
@@ -94,14 +98,15 @@ def parse_response(emulab_output):
     return json_string
 
 
-def create_profile_xml(profile_pid, profile_name, script, profile_listed='1', profile_public='1'):
-    """create_profile_xml
+def write_profile_xml(profile_pid, profile_name, script, repourl, profile_listed='1', profile_public='1'):
+    """write_profile_xml
 
         Create XML file for creating profile in Emulab # noqa: E501
 
         :param profile_pid: string type
         :param profile_name: string type
         :param script: string type
+        :param repourl: string type
         :param profile_listed: string type
         :param profile_public: string type
 
@@ -114,36 +119,49 @@ def create_profile_xml(profile_pid, profile_name, script, profile_listed='1', pr
         script = open('/Users/ericafu/Documents/Github/aerpaw-gateway/testonepc.py').read()
         # abort(404, description="script is empty")
     """
-    fp_script = tempfile.NamedTemporaryFile(delete=False)
-    fp_script.write(script.encode())
-    logger.debug(script.encode())
-    fp_script.close()
-    rspec = subprocess.check_output(["python3", fp_script.name])
-    logger.debug(rspec.decode('utf-8'))
-    os.unlink(fp_script.name)
+    if script is not None:
+        fp_script = tempfile.NamedTemporaryFile(delete=False)
+        fp_script.write(script.encode())
+        logger.debug(script.encode())
+        fp_script.close()
+        rspec = subprocess.check_output(["python3", fp_script.name])
+        logger.debug(rspec.decode('utf-8'))
+        os.unlink(fp_script.name)
 
     # prepare XML
     profile = ET.Element('profile')
 
+    # profile_pid - project name
     profile_pid_attr = ET.SubElement(profile, 'attribute')
     profile_pid_attr.set('name', 'profile_pid')
     profile_pid_value = ET.SubElement(profile_pid_attr, 'value')
     profile_pid_value.text = profile_pid
 
+    # profile name
     profile_name_attr = ET.SubElement(profile, 'attribute')
     profile_name_attr.set('name', 'profile_name')
     profile_name_value = ET.SubElement(profile_name_attr, 'value')
     profile_name_value.text = profile_name
 
-    rspec_attr = ET.SubElement(profile, 'attribute')
-    rspec_attr.set('name', 'rspec')
-    rspec_value = ET.SubElement(rspec_attr, 'value')
-    rspec_value.text = rspec.decode('utf-8')
+    # repo address
+    if repourl is not None:
+        script_attr = ET.SubElement(profile, 'attribute')
+        script_attr.set('name', 'repourl')
+        script_value = ET.SubElement(script_attr, 'value')
+        script_value.text = repourl
 
-    script_attr = ET.SubElement(profile, 'attribute')
-    script_attr.set('name', 'script')
-    script_value = ET.SubElement(script_attr, 'value')
-    script_value.text = script
+    if script is not None:
+        # rspec
+        rspec_attr = ET.SubElement(profile, 'attribute')
+        rspec_attr.set('name', 'rspec')
+        rspec_value = ET.SubElement(rspec_attr, 'value')
+        rspec_value.text = rspec.decode('utf-8')
+
+        # geni-lib script
+        script_attr = ET.SubElement(profile, 'attribute')
+        script_attr.set('name', 'script')
+        script_value = ET.SubElement(script_attr, 'value')
+        script_value.text = script
 
     profile_listed_attr = ET.SubElement(profile, 'attribute')
     profile_listed_attr.set('name', 'profile_listed')
@@ -156,7 +174,7 @@ def create_profile_xml(profile_pid, profile_name, script, profile_listed='1', pr
     profile_public_value.text = profile_public
 
     xmldata = ET.tostring(profile)
-    logger.debug(xmldata)
+    logger.warning(xmldata)
 
     xmltmpfile = tempfile.NamedTemporaryFile(delete=False)
     xmltmpfile.write(xmldata)

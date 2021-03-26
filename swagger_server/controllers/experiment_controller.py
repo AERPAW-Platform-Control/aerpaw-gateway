@@ -40,6 +40,11 @@ def create_experiment(body):  # noqa: E501
     if req.project is None:
         req.project = emulab.EMULAB_PROJ
 
+    # update the profile from repo
+    update_repo_cmd = '{} sudo -u {} manage_profile updatefromrepo {}'.format(
+        emulab.SSH_BOSS, req.username, req.profile)
+    emulab.send_request(update_repo_cmd)
+
     emulab_cmd = '{} sudo -u {} start-experiment -a {} -w --name {} --project {} {}'.format(
         emulab.SSH_BOSS, req.username, urn, req.name, req.project, req.profile)
     emulab_stdout = emulab.send_request(emulab_cmd)
