@@ -141,11 +141,15 @@ def query_experiment(experiment, username=None, project=None):  # noqa: E501
     #  "uuid": "fe6cffea-87fc-11eb-9b1f-6cae8b3bf14a"
     # }
     results = json.loads(emulab_stdout)
-    experiment = Experiment(name=experiment, project=project,
+    aerpaw_experiment = Experiment(name=experiment, project=project,
                             status=results['status'], uuid=results['uuid'])
 
+    if results['status'] == 'failed':
+        delete_experiment(experiment)
+        abort(500, description=results['failure_message'])
+
     logger.info(results)
-    return experiment
+    return aerpaw_experiment
 
 
 def dumpmanifest_experiment(experiment, username=None, project=None):  # noqa: E501
