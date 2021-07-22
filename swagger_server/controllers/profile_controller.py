@@ -30,7 +30,7 @@ def create_profile(body):  # noqa: E501
     if req.project is None:
         req.project = emulab.EMULAB_PROJ
 
-    xmlfile = emulab.create_profile_xml(req.project, req.name, req.script)
+    xmlfile = emulab.write_profile_xml(req.project, req.name, req.script, req.repourl)
     xmlpath = emulab.send_file(xmlfile)
 
     emulab_cmd = '{} sudo -u {} manage_profile create {}'.format(
